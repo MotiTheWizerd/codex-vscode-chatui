@@ -1,0 +1,42 @@
+{
+  "name": "codex-vs-ext",
+  "displayName": "Codex Chat",
+  "description": "AI chat extension for VS Code powered by Codex",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.103.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:codex.openChat"
+  ],
+  "main": "./dist/ext/extension.js",
+  "type": "module",
+  "contributes": {
+    "commands": [
+      {
+        "command": "codex.openChat",
+        "title": "Open Codex Chat",
+        "category": "Codex"
+      }
+    ]
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/vscode": "^1.103.0",
+    "typescript": "^5.9.2"
+  }
+}
