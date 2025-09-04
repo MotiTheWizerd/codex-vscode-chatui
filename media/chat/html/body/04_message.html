@@ -1,0 +1,50 @@
+<div class="message">
+  <div class="message-header">
+    <div class="message-avatar assistant-avatar">AI</div>
+    <div class="message-time">1m ago</div>
+  </div>
+  <div class="message-content">
+    <div class="thinking-indicator">Thought for 4s</div>
+    <p>
+      Of course. I will search for all HTML files in the current project
+      directory.
+    </p>
+
+    <div class="tool-call read">
+      <div class="tool-header">
+        <span class="tool-icon">🔍</span>
+        <span class="tool-name">search_files</span>
+        <span class="tool-params"
+          >pattern: "*.html", directory: "./src"</span
+        >
+      </div>
+      <div class="tool-content">
+        Found HTML files: - ./src/index.html - ./src/pages/about.html -
+        ./src/templates/layout.html - ./dist/index.html
+      </div>
+      <div class="tool-result">
+        <div class="tool-result-label">Search Completed</div>
+        <div>4 files found • Searched 47 files in 0.12s</div>
+      </div>
+    </div>
+
+    <p>
+      Let me also try to read a file that might not exist to show error
+      handling:
+    </p>
+
+    <div class="tool-call error">
+      <div class="tool-header">
+        <span class="tool-icon">⚠️</span>
+        <span class="tool-name">read_file</span>
+        <span class="tool-params">path: "./nonexistent.html"</span>
+      </div>
+      <div class="tool-result">
+        <div class="tool-result-label">Error</div>
+        <div>
+          ENOENT: no such file or directory './nonexistent.html'
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

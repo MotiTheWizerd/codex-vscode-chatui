@@ -1,0 +1,67 @@
+.code-block {
+  background: #2d2d30;
+  border-radius: 6px;
+  margin: 12px 0;
+  border-left: 3px solid #ffd700;
+  overflow: hidden;
+}
+
+.code-header {
+  background: #323233;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #404040;
+}
+
+.code-language {
+  font-size: 11px;
+  color: #ffd700;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.file-indicator {
+  font-size: 11px;
+  color: #4ec9b0;
+}
+
+.code-content {
+  padding: 16px;
+  font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #d4d4d4;
+  overflow-x: auto;
+}
+
+.file-created {
+  background: #1a2f1a;
+  border-left: 3px solid #4caf50;
+  border-radius: 6px;
+  padding: 12px;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-created-icon {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.file-name {
+  font-family: "Cascadia Code", monospace;
+  color: #4ec9b0;
+}
+
+.file-status {
+  background: #4caf50;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 600;
+}

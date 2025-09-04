@@ -1,0 +1,15 @@
+.syntax-highlight .keyword {
+  color: #569cd6;
+}
+.syntax-highlight .string {
+  color: #ce9178;
+}
+.syntax-highlight .comment {
+  color: #6a9955;
+}
+.syntax-highlight .function {
+  color: #dcdcaa;
+}
+.syntax-highlight .variable {
+  color: #4fc1ff;
+}

@@ -1,6 +1,6 @@
 // ui/chat-panel-manager.ts
 import * as vscode from "vscode";
-import { ChatWebview } from "./chat-webview";
+import { ChatWebview } from "@/ui/chat-webview";
 import { CoreManager } from "@/core/manager";
 
 export class ChatPanelManager {

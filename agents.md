@@ -61,6 +61,14 @@ import { CoreManager } from "../../core/manager"; // avoid
 import { EventBus } from "/core/event-bus"; // avoid
 ```
 
+📦 Package Management
+We use pnpm as our package manager.
+It ensures fast installs with a global content-addressable store.
+It provides strict dependency isolation—no accidental hoisting or undeclared imports.
+This aligns with our design principles of encapsulation and predictable builds.
+
+👉 Commands are the same shape as npm/yarn (pnpm install, pnpm run build), but lockfile and workspace handling are stricter.
+
 # 🟦 TypeScript
 
 This project is built with **TypeScript**, a strongly typed superset of JavaScript.
@@ -71,10 +79,17 @@ It provides:
 - **Modern ECMAScript features** → async/await, modules, decorators.
 - **Better tooling** → IntelliSense, refactoring, auto-completion.
 - **Safer large-scale code** → predictable APIs, fewer runtime bugs.
-
-We compile TypeScript (`.ts`) into JavaScript (`.js`) before running inside VS Code.
+  We compile TypeScript (`.ts`) into JavaScript (`.js`) before running inside VS Code.
 
 👉 For VS Code extensions, TypeScript is the de-facto standard — the VS Code API itself is typed, so using TypeScript gives you stronger type safety and a smoother development experience.
+
+### — Isolation & Encapsulation
+
+## Why this matters (3 bullets only)
+
+Safety: Isolated modules prevent a bug or secret leak in one place from cascading through the system.
+Testability: Encapsulated behavior can be unit-tested with fakes/mocks—no network, no disk, no surprise global state.
+Composability: Clear contracts let us swap memory/LLM/tool backends without touching agent logic.
 
 ### Documentation Instructions
 

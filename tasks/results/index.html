@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Assistant Chat</title>
+    <link rel="stylesheet" href="styles/base.css" />
+    <link rel="stylesheet" href="styles/messages.css" />
+    <link rel="stylesheet" href="styles/avatars.css" />
+    <link rel="stylesheet" href="styles/code-blocks.css" />
+    <link rel="stylesheet" href="styles/tool-calls.css" />
+    <link rel="stylesheet" href="styles/input.css" />
+    <link rel="stylesheet" href="styles/syntax-highlight.css" />
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="messages-container" id="messagesContainer">
+        <div class="message">
+          <div class="message-header">
+            <div class="message-avatar user-avatar">U</div>
+            <div class="message-time">2m ago</div>
+          </div>
+          <div class="message-content">
+            hi create me a js folder with basic files
+          </div>
+        </div>
+
+        <div class="message">
+          <div class="message-header">
+            <div class="message-avatar assistant-avatar">AI</div>
+            <div class="message-time">2m ago</div>
+          </div>
+          <div class="message-content">
+            <div class="thinking-indicator">Thought for 4s</div>
+            <p>
+              Of course. I can help with that. I will create a
+              <code>js</code> folder for you with some basic files to get you
+              started. I'll create <code>app.js</code> for your main application
+              logic, <code>utils.js</code> for any helper functions you might
+              need, and <code>main.js</code> as the entry point.
+            </p>
+
+            <p>I'll start by creating the folder structure and files:</p>
+
+            <div class="tool-call write">
+              <div class="tool-header">
+                <span class="tool-icon">✏️</span>
+                <span class="tool-name">write_file</span>
+                <span class="tool-params">path: "./js/app.js"</span>
+              </div>
+              <div class="tool-content syntax-highlight">
+                <span class="comment">// Main application logic</span>
+                <span class="keyword">class</span>
+                <span class="function">App</span> {
+                <span class="function">constructor</span>() {
+                <span class="keyword">this</span>.<span class="variable"
+                  >initialized</span
+                >
+                = <span class="keyword">false</span>; }
+
+                <span class="function">init</span>() {
+                <span class="function">console</span>.<span class="function"
+                  >log</span
+                >(<span class="string">'App initialized'</span>);
+                <span class="keyword">this</span>.<span class="variable"
+                  >initialized</span
+                >
+                = <span class="keyword">true</span>; } }
+
+                <span class="keyword">export</span>
+                <span class="keyword">default</span>
+                <span class="function">App</span>;
+              </div>
+              <div class="tool-result">
+                <div class="tool-result-label">File Written Successfully</div>
+                <div>Created: ./js/app.js • 187 bytes written</div>
+              </div>
+            </div>
+
+            <div class="tool-call write">
+              <div class="tool-header">
+                <span class="tool-icon">✏️</span>
+                <span class="tool-name">write_file</span>
+                <span class="tool-params">path: "./js/utils.js"</span>
+              </div>
+              <div class="tool-content syntax-highlight">
+                <span class="comment">// Utility functions</span>
+                <span class="keyword">export</span>
+                <span class="keyword">function</span>
+                <span class="function">formatDate</span>(<span class="variable"
+                  >date</span
+                >) { <span class="keyword">return</span>
+                <span class="variable">date</span>.<span class="function"
+                  >toISOString</span
+                >().<span class="function">split</span>(<span class="string"
+                  >'T'</span
+                >)[<span class="keyword">0</span>]; }
+
+                <span class="keyword">export</span>
+                <span class="keyword">function</span>
+                <span class="function">debounce</span>(<span class="variable"
+                  >func</span
+                >, <span class="variable">delay</span>) {
+                <span class="keyword">let</span>
+                <span class="variable">timeoutId</span>;
+                <span class="keyword">return</span> (...<span class="variable"
+                  >args</span
+                >) => { <span class="function">clearTimeout</span>(<span
+                  class="variable"
+                  >timeoutId</span
+                >); <span class="variable">timeoutId</span> =
+                <span class="function">setTimeout</span>(() =>
+                <span class="variable">func</span>.<span class="function"
+                  >apply</span
+                >(<span class="keyword">this</span>,
+                <span class="variable">args</span>),
+                <span class="variable">delay</span>); }; }
+              </div>
+              <div class="tool-result">
+                <div class="tool-result-label">File Written Successfully</div>
+                <div>Created: ./js/utils.js • 295 bytes written</div>
+              </div>
+            </div>
+
+            <div class="tool-call write">
+              <div class="tool-header">
+                <span class="tool-icon">✏️</span>
+                <span class="tool-name">write_file</span>
+                <span class="tool-params">path: "./js/main.js"</span>
+              </div>
+              <div class="tool-content syntax-highlight">
+                <span class="keyword">import</span>
+                <span class="function">App</span>
+                <span class="keyword">from</span>
+                <span class="string">'./app.js'</span>;
+
+                <span class="comment">// Initialize the application</span>
+                <span class="keyword">const</span>
+                <span class="variable">app</span> =
+                <span class="keyword">new</span>
+                <span class="function">App</span>();
+                <span class="variable">app</span>.<span class="function"
+                  >init</span
+                >();
+              </div>
+              <div class="tool-result">
+                <div class="tool-result-label">File Written Successfully</div>
+                <div>Created: ./js/main.js • 98 bytes written</div>
+              </div>
+            </div>
+
+            <p>
+              Perfect! I have successfully created the <code>js</code> folder
+              with three essential files. Let me also clean up an old file
+              that's no longer needed:
+            </p>
+
+            <div class="tool-call delete">
+              <div class="tool-header">
+                <span class="tool-icon">🗑️</span>
+                <span class="tool-name">delete_file</span>
+                <span class="tool-params">path: "./old-config.json"</span>
+              </div>
+              <div class="tool-result">
+                <div class="tool-result-label">File Deleted Successfully</div>
+                <div>Removed: ./old-config.json • Size was: 2.1 KB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="message">
+          <div class="message-header">
+            <div class="message-avatar user-avatar">U</div>
+            <div class="message-time">1m ago</div>
+          </div>
+          <div class="message-content">search for all html files</div>
+        </div>
+
+        <div class="message">
+          <div class="message-header">
+            <div class="message-avatar assistant-avatar">AI</div>
+            <div class="message-time">1m ago</div>
+          </div>
+          <div class="message-content">
+            <div class="thinking-indicator">Thought for 4s</div>
+            <p>
+              Of course. I will search for all HTML files in the current project
+              directory.
+            </p>
+
+            <div class="tool-call read">
+              <div class="tool-header">
+                <span class="tool-icon">🔍</span>
+                <span class="tool-name">search_files</span>
+                <span class="tool-params"
+                  >pattern: "*.html", directory: "./src"</span
+                >
+              </div>
+              <div class="tool-content">
+                Found HTML files: - ./src/index.html - ./src/pages/about.html -
+                ./src/templates/layout.html - ./dist/index.html
+              </div>
+              <div class="tool-result">
+                <div class="tool-result-label">Search Completed</div>
+                <div>4 files found • Searched 47 files in 0.12s</div>
+              </div>
+            </div>
+
+            <p>
+              Let me also try to read a file that might not exist to show error
+              handling:
+            </p>
+
+            <div class="tool-call error">
+              <div class="tool-header">
+                <span class="tool-icon">⚠️</span>
+                <span class="tool-name">read_file</span>
+                <span class="tool-params">path: "./nonexistent.html"</span>
+              </div>
+              <div class="tool-result">
+                <div class="tool-result-label">Error</div>
+                <div>
+                  ENOENT: no such file or directory './nonexistent.html'
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-container">
+        <div class="context-bar">
+          <span class="context-icon">@</span>
+          <span>Add Context</span>
+          <span style="margin-left: auto; color: #808080"
+            >Plan, search, build anything</span
+          >
+        </div>
+
+        <div class="agent-selector">
+          <div class="agent-label">
+            <span>🤖</span>
+            Agent
+          </div>
+          <select class="agent-dropdown" id="agentSelect">
+            <option value="auto">Auto</option>
+            <option value="coding">Coding</option>
+            <option value="search">Search</option>
+            <option value="planning">Planning</option>
+          </select>
+        </div>
+
+        <div class="input-wrapper">
+          <textarea
+            class="input-field"
+            id="messageInput"
+            placeholder="Ask anything (Ctrl+I)"
+            rows="1"
+          ></textarea>
+          <div class="input-actions">
+            <button class="action-button" id="attachButton" title="Attach file">
+              📎
+            </button>
+            <button
+              class="action-button send-button"
+              id="sendButton"
+              title="Send message"
+            >
+              ➤
+            </button>
+          </div>
+        </div>
+        <div class="shortcut-hint">Ctrl+Enter to send • Ctrl+I to focus</div>
+      </div>
+    </div>
+
+    <script src="js/main.js"></script>
+  </body>
+</html>

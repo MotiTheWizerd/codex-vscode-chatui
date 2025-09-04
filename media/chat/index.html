@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+      default-src 'none';
+      img-src {{CSP_SOURCE}} https: blob:;
+      style-src {{CSP_SOURCE}};
+      script-src 'nonce-{{NONCE}}';
+      font-src {{CSP_SOURCE}};
+      connect-src {{CSP_SOURCE}} https:;
+    "
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codex Chat</title>
+    <!-- Note: place CSS files under media/chat/styles and JS files under media/chat/js.
+         The extension will also pick up any .css/.js in media/chat root. -->
+    <!-- Injected head fragments -->
+    {{HEAD_PARTS}} {{STYLES}}
+  </head>
+  <body>
+    <div id="messagesContainer" class="chat-container"></div>
+    <!-- Injected body fragments -->
+    {{BODY_PARTS}} {{SCRIPTS}}
+  </body>
+</html>

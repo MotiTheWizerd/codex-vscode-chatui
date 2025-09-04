@@ -11,21 +11,58 @@
   ],
   "main": "./dist/ext/extension.js",
   "type": "module",
+  "publisher": "codex",
+  "activationEvents": [
+    "onStartupFinished",
+    "onViewContainer:codexChatContainer"
+  ],
   "contributes": {
     "commands": [
       {
-        "command": "codex.openChat",
-        "title": "Open Codex Chat",
+        "command": "codex.openChatPanel",
+        "title": "Codex: Open Chat"
+      },
+      {
+        "command": "codex.showMenu",
+        "title": "Codex: Menu",
+        "category": "Codex"
+      },
+      {
+        "command": "codex.showLogs",
+        "title": "Codex: Show Logs",
+        "category": "Codex"
+      },
+      {
+        "command": "codex.toggleSidebar",
+        "title": "Codex: Toggle Sidebar",
         "category": "Codex"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codexChatContainer",
+          "title": "Codex",
+          "icon": "media/codex-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "codexChatContainer": [
+        {
+          "id": "codex.chatView",
+          "name": "Codex Chat",
+          "icon": "media/codex-icon.svg"
+        }
+      ]
+    }
   },
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "tsc && tsc-alias && node ./src/scripts/fix-import-extensions.cjs",
+    "watch": "concurrently --raw \"tsc -w\" \"tsc-alias -w\" \"chokidar \\\"dist/**/*.js\\\" -c \\\"node src/scripts/fix-import-extensions.cjs\\\"\"",
     "test": "jest",
     "backup": "node src/scripts/package-project.js",
     "lint": "eslint 'src/**/*.{ts,js}'"
@@ -38,8 +75,11 @@
     "@types/node": "^24.3.0",
     "@types/vscode": "^1.103.0",
     "archiver": "^7.0.1",
+    "concurrently": "^9.2.1",
     "jest": "^30.1.3",
     "ts-jest": "^29.4.1",
-    "typescript": "^5.9.2"
+    "tsc-alias": "^1.8.16",
+    "typescript": "^5.9.2",
+    "chokidar-cli": "^3.0.0"
   }
 }

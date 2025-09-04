@@ -1,0 +1,7 @@
+﻿{
+  "resolveFullPaths": true,
+  "rewriteExtensions": {
+    "enabled": true,
+    "type": "js"
+  }
+}
