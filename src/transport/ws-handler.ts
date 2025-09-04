@@ -3,6 +3,7 @@
 
 import { ConfigService } from '@/core/config.js';
 import { Logger } from '@/telemetry/logger.js';
+import { log as defaultLog } from '@/telemetry/log';
 
 export class WebSocketHandler {
   private configService: ConfigService;
@@ -11,9 +12,9 @@ export class WebSocketHandler {
   private apiKey: string;
   private logger: Logger | null = null;
   private messageHandler: ((data: unknown) => void) | null = null;
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private reconnectDelay = 1000; // 1 second
+  private reconnecting = false;
+  private hbTimer?: any;
+  private closedByUser = false;
 
   constructor(configService: ConfigService, logger: Logger | null = null) {
     this.configService = configService;
@@ -25,96 +26,68 @@ export class WebSocketHandler {
   }
 
   // Connect to the WebSocket server with reconnection logic
-  async connect(): Promise<void> {
+  async connect(attempt = 0): Promise<void> {
     const wsUrl = `${this.baseUrl}/ws?api_key=${this.apiKey}`;
-    
-    return new Promise((resolve, reject) => {
+    const logger = this.logger ?? defaultLog;
+
+    return new Promise((resolve) => {
       try {
-        this.ws = new WebSocket(wsUrl);
-        
-        this.ws.onopen = () => {
-          this.logger?.info('WebSocket connected to Codex server');
-          this.reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+        const ws = new WebSocket(wsUrl);
+        this.ws = ws;
+        this.closedByUser = false;
+
+        ws.onopen = () => {
+          logger.info('ws open', { url: wsUrl });
+          this.reconnecting = false;
+          this.startHeartbeat();
           resolve();
         };
-        
-        this.ws.onerror = (error) => {
-          this.logger?.error('WebSocket connection error', { error });
-          // Don't reject immediately, wait for close event
-        };
-        
-        this.ws.onclose = (event) => {
-          this.logger?.info('WebSocket connection closed', { 
-            code: event.code, 
-            reason: event.reason 
-          });
-          
-          // Try to reconnect if this wasn't a clean close
-          if (event.code !== 1000) { // 1000 = Normal closure
-            this.handleReconnect().catch(reject);
-          } else {
-            reject(new Error('WebSocket closed normally'));
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data as string);
+            this.messageHandler?.(data);
+          } catch (e) {
+            logger.warn('ws message parse failed', { err: String(e) });
           }
         };
-        
-        // Reattach message handler if we had one
-        if (this.messageHandler) {
-          this.ws.onmessage = (event) => {
-            try {
-              const data = JSON.parse(event.data);
-              this.messageHandler?.(data);
-            } catch (error) {
-              this.logger?.error('Error parsing WebSocket message', { error });
-            }
-          };
-        }
+
+        ws.onclose = () => {
+          this.clearHeartbeat();
+          if (this.closedByUser) {
+            logger.info('ws closed by user');
+            return;
+          }
+          const delay = Math.min(1000 * 2 ** attempt, 15000) + Math.random() * 500;
+          logger.warn('ws closed, retrying', { attempt, delay });
+          setTimeout(() => this.connect(attempt + 1).catch(() => {}), delay);
+        };
+
+        ws.onerror = (e) => {
+          logger.error('ws error', { err: String(e) });
+          ws.close(); // triggers onclose → backoff
+        };
       } catch (error) {
-        this.logger?.error('Failed to create WebSocket connection', { error });
-        reject(error);
+        logger.error('Failed to create WebSocket connection', { err: String(error) });
+        // trigger retry via onclose path
+        setTimeout(() => this.connect(attempt + 1).catch(() => {}), 1000);
       }
     });
-  }
-  
-  // Handle reconnection logic
-  private async handleReconnect(): Promise<void> {
-    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      this.logger?.error('Max reconnect attempts reached, giving up');
-      return;
-    }
-    
-    this.reconnectAttempts++;
-    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1); // Exponential backoff
-    
-    this.logger?.info(`Attempting to reconnect in ${delay}ms`, { 
-      attempt: this.reconnectAttempts 
-    });
-    
-    await new Promise(resolve => setTimeout(resolve, delay));
-    
-    try {
-      await this.connect();
-      this.logger?.info('WebSocket reconnected successfully');
-    } catch (error) {
-      this.logger?.error('WebSocket reconnection failed', { error });
-      // Try again
-      this.handleReconnect().catch(() => {
-        this.logger?.error('Failed to reconnect after multiple attempts');
-      });
-    }
   }
 
   // Send a message through the WebSocket with error handling
   sendMessage(message: string): void {
-    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
-      const error = new Error('WebSocket is not connected');
-      this.logger?.error('Cannot send message', { error });
-      throw error;
+    const logger = this.logger ?? defaultLog;
+    const s = this.ws;
+    if (!s || s.readyState !== s.OPEN) {
+      logger.error('ws not open');
+      throw new Error('WebSocket is not connected');
     }
-    
+
     try {
-      this.ws.send(JSON.stringify({ message }));
+      s.send(JSON.stringify({ message }));
     } catch (error) {
-      this.logger?.error('Error sending WebSocket message', { error });
+      logger.error('Error sending WebSocket message', { err: String(error) });
       throw error;
     }
   }
@@ -138,8 +111,24 @@ export class WebSocketHandler {
   // Close the WebSocket connection
   close(): void {
     if (this.ws) {
+      this.closedByUser = true;
+      this.clearHeartbeat();
       this.ws.close(1000, 'Normal closure'); // 1000 = Normal closure
       this.ws = null;
     }
+  }
+
+  private startHeartbeat() {
+    this.clearHeartbeat();
+    this.hbTimer = setInterval(() => {
+      try {
+        this.sendMessage(JSON.stringify({ type: 'ping', ts: Date.now() }));
+      } catch {
+        // ignore; onclose will handle reconnect
+      }
+    }, 15000);
+  }
+  private clearHeartbeat() {
+    if (this.hbTimer) clearInterval(this.hbTimer);
   }
 }

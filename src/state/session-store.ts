@@ -3,20 +3,12 @@
 
 import * as vscode from 'vscode';
 import { Logger } from "@/telemetry/logger.js";
-
-export interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-}
-
-export interface ChatSession {
-  id: string;
-  messages: ChatMessage[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type {
+  ChatMessage,
+  ChatSession,
+  PersistedChatMessage,
+  PersistedChatSession,
+} from "@/types/chat";
 
 export class SessionStore {
   private context: vscode.ExtensionContext;
@@ -32,32 +24,44 @@ export class SessionStore {
 
   // Load sessions from storage
   private loadSessions(): void {
-    const storedSessions = this.context.workspaceState.get('codex.sessions', {});
+    const storedSessions = this.context.workspaceState.get<Record<string, PersistedChatSession>>('codex.sessions', {});
     for (const [id, session] of Object.entries(storedSessions)) {
-      // Convert timestamp strings to Date objects
-      const chatSession = session as any;
-      chatSession.createdAt = new Date(chatSession.createdAt);
-      chatSession.updatedAt = new Date(chatSession.updatedAt);
-      chatSession.messages = chatSession.messages.map((msg: any) => ({
-        ...msg,
-        timestamp: new Date(msg.timestamp)
-      }));
-      
+      const chatSession: ChatSession = {
+        id,
+        createdAt: new Date(session.createdAt),
+        updatedAt: new Date(session.updatedAt),
+        messages: session.messages.map((m: PersistedChatMessage): ChatMessage => ({
+          id: m.id,
+          role: m.role,
+          content: m.content,
+          timestamp: new Date(m.timestamp),
+        })),
+      };
       this.sessions.set(id, chatSession);
     }
-    
+
     // Set the current session ID if it exists
-    this.currentSessionId = this.context.workspaceState.get('codex.currentSessionId', null);
+    this.currentSessionId = this.context.workspaceState.get<string | null>('codex.currentSessionId', null);
     this.logger?.info("Sessions loaded", { count: this.sessions.size });
   }
 
   // Save sessions to storage
   private async saveSessions(): Promise<void> {
-    const sessionsObj: any = {};
+    const sessionsObj: Record<string, PersistedChatSession> = {};
     for (const [id, session] of this.sessions.entries()) {
-      sessionsObj[id] = session;
+      sessionsObj[id] = {
+        id: session.id,
+        createdAt: session.createdAt.toISOString(),
+        updatedAt: session.updatedAt.toISOString(),
+        messages: session.messages.map((m): PersistedChatMessage => ({
+          id: m.id,
+          role: m.role,
+          content: m.content,
+          timestamp: m.timestamp.toISOString(),
+        })),
+      };
     }
-    
+
     await this.context.workspaceState.update('codex.sessions', sessionsObj);
     await this.context.workspaceState.update('codex.currentSessionId', this.currentSessionId);
     this.logger?.info("Sessions saved", { count: this.sessions.size });

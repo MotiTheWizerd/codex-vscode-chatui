@@ -2,16 +2,11 @@
 // This file manages tool registration and execution
 
 import { Logger } from "@/telemetry/logger.js";
-
-export interface Tool {
-  name: string;
-  description: string;
-  parameters: any;
-  execute: (args: any) => Promise<any>;
-}
+import type { Tool } from "@/types/tools";
+import { serializeErr } from "@/telemetry/err";
 
 export class ToolBus {
-  private tools: Map<string, Tool> = new Map();
+  private tools: Map<string, Tool<unknown, unknown>> = new Map();
   private logger: Logger | null = null;
 
   setLogger(logger: Logger): void {
@@ -19,31 +14,31 @@ export class ToolBus {
   }
 
   // Register a tool
-  register(tool: Tool): void {
+  register(tool: Tool<unknown, unknown>): void {
     this.tools.set(tool.name, tool);
     this.logger?.info(`Tool registered: ${tool.name}`);
   }
 
   // Execute a tool by name
-  async execute(name: string, args: any): Promise<any> {
+  async execute(name: string, args: unknown): Promise<unknown> {
     const tool = this.tools.get(name);
     if (!tool) {
       const error = new Error(`Tool ${name} not found`);
-      this.logger?.error(`Tool execution failed: ${name}`, { error });
+      this.logger?.error(`Tool execution failed: ${name}`, { err: serializeErr(error) });
       throw error;
     }
     
     this.logger?.info(`Executing tool: ${name}`, { args });
-    return await tool.execute(args);
+    return await (tool as Tool<unknown, unknown>).execute(args);
   }
 
   // Get all registered tools
-  getTools(): Tool[] {
+  getTools(): Tool<unknown, unknown>[] {
     return Array.from(this.tools.values());
   }
 
   // Get a tool by name
-  getTool(name: string): Tool | undefined {
+  getTool(name: string): Tool<unknown, unknown> | undefined {
     return this.tools.get(name);
   }
 }

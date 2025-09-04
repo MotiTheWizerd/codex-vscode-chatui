@@ -1,0 +1,21 @@
+{
+  "root": true,
+  "env": { "es2022": true, "node": true },
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "overrides": [
+    {
+      "files": ["src/**/*.{ts,tsx,js}"],
+      "rules": {
+        "no-console": ["error", { "allow": ["assert"] }],
+        "@typescript-eslint/no-explicit-any": "error"
+      }
+    }
+  ],
+  "ignorePatterns": ["dist/**", "node_modules/**"]
+}
+

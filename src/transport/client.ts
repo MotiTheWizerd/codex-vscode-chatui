@@ -3,6 +3,9 @@
 
 import { ConfigService } from "@core/config";
 import { Logger } from "@/telemetry/logger.js";
+import { retry, safeFetch } from "@/transport/http";
+import { serializeErr } from "@/telemetry/err";
+import { ProtocolError } from "@/telemetry/errors";
 
 export class CodexClient {
   private configService: ConfigService;
@@ -32,53 +35,28 @@ export class CodexClient {
       ...options,
     });
 
-    // Retry logic with exponential backoff
-    const maxRetries = 3;
-    const baseDelay = 1000; // 1 second
-
-    for (let attempt = 0; attempt <= maxRetries; attempt++) {
-      try {
-        this.logger?.info(`Sending message to Codex server (attempt ${attempt + 1})`, { url });
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-
-        const response = await fetch(url, {
-          method: "POST",
-          headers,
-          body,
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-      } catch (error) {
-        // If this is the last attempt, re-throw the error
-        if (attempt === maxRetries) {
-          this.logger?.error("Error sending message to Codex server after retries", { error });
-          throw error;
-        }
-
-        // For network errors or timeouts, retry with exponential backoff
-        if (error instanceof Error && (error.name === 'AbortError' || error.message.includes('fetch'))) {
-          const delay = baseDelay * Math.pow(2, attempt);
-          this.logger?.warn(`Retrying message send in ${delay}ms`, { attempt: attempt + 1 });
-          await new Promise(resolve => setTimeout(resolve, delay));
-          continue;
-        }
-
-        // For other errors, re-throw immediately
-        this.logger?.error("Non-retryable error sending message to Codex server", { error });
-        throw error;
-      }
+    try {
+      const res = await retry(
+        async () =>
+          safeFetch(
+            url,
+            {
+              method: "POST",
+              headers,
+              body,
+            },
+            30_000
+          ),
+        { retries: 3, baseMs: 500, maxMs: 8000 }
+      );
+      return await res.json();
+    } catch (error) {
+      this.logger?.error("sendMessage failed", {
+        url,
+        err: serializeErr(error),
+      });
+      throw error;
     }
-    
-    // This should never be reached
-    throw new Error("Unexpected error in sendMessage");
   }
 
   // Stream a response from the Codex server with timeout
@@ -100,24 +78,18 @@ export class CodexClient {
 
     try {
       this.logger?.info("Streaming response from Codex server", { url });
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
-
-      const response = await fetch(url, {
-        method: "POST",
-        headers,
-        body,
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      const response = await safeFetch(
+        url,
+        {
+          method: "POST",
+          headers,
+          body,
+        },
+        60_000
+      );
 
       if (!response.body) {
-        throw new Error("Response body is null");
+        throw new ProtocolError("Response body is null");
       }
 
       const reader = response.body.getReader();
@@ -125,11 +97,6 @@ export class CodexClient {
 
       try {
         while (true) {
-          // Check if we've been aborted
-          if (controller.signal.aborted) {
-            throw new Error("Stream timeout");
-          }
-
           const { done, value } = await reader.read();
           if (done) break;
 
@@ -140,7 +107,7 @@ export class CodexClient {
         reader.releaseLock();
       }
     } catch (error) {
-      this.logger?.error("Error streaming response from Codex server", { error });
+      this.logger?.error("Error streaming response from Codex server", { err: serializeErr(error) });
       throw error;
     }
   }

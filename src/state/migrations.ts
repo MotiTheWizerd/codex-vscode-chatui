@@ -1,11 +1,20 @@
 // Migrations for schema upgrades
 // This file handles database schema migrations for the session store
 
+import type { PersistedChatSession } from "@/types/chat";
+import { log } from "@/telemetry/log";
+import { serializeErr } from "@/telemetry/err";
+
+export interface PersistedState {
+  sessions: Record<string, PersistedChatSession>;
+  currentSessionId: string | null;
+}
+
 export interface Migration {
   version: number;
   description: string;
-  up: (data: any) => any;
-  down: (data: any) => any;
+  up: (data: PersistedState) => PersistedState;
+  down: (data: PersistedState) => PersistedState;
 }
 
 export class MigrationManager {
@@ -22,8 +31,8 @@ export class MigrationManager {
   applyMigrations(
     currentVersion: number,
     targetVersion: number,
-    data: any
-  ): any {
+    data: PersistedState
+  ): PersistedState {
     // Find migrations to apply
     const migrationsToApply = this.migrations.filter(
       (m) => m.version > currentVersion && m.version <= targetVersion
@@ -35,7 +44,7 @@ export class MigrationManager {
       try {
         result = migration.up(result);
       } catch (error) {
-        console.error(`Error applying migration ${migration.version}:`, error);
+        log.error(`Error applying migration`, { version: migration.version, err: serializeErr(error) });
         throw new Error(`Failed to apply migration ${migration.version}`);
       }
     }
@@ -58,7 +67,7 @@ export const migrationManager = new MigrationManager();
 migrationManager.register({
   version: 1,
   description: "Initial schema",
-  up: (data: any) => {
+  up: (data: PersistedState) => {
     // Ensure data has the basic structure
     if (!data.sessions) {
       data.sessions = {};
@@ -68,18 +77,21 @@ migrationManager.register({
     }
     return data;
   },
-  down: (data: any) => data,
+  down: (data: PersistedState) => data,
 });
 
 // Add timestamp migration
 migrationManager.register({
   version: 2,
   description: "Add timestamp fields",
-  up: (data: any) => {
+  up: (data: PersistedState) => {
     // Ensure all sessions have timestamp fields
     if (data.sessions) {
       for (const sessionId in data.sessions) {
         const session = data.sessions[sessionId];
+        if (!session) {
+          continue;
+        }
         if (!session.createdAt) {
           session.createdAt = new Date().toISOString();
         }
@@ -99,5 +111,5 @@ migrationManager.register({
     }
     return data;
   },
-  down: (data: any) => data,
+  down: (data: PersistedState) => data,
 });
