@@ -2,9 +2,7 @@ import * as vscode from "vscode";
 import { Logger } from "@/telemetry/logger";
 import { registerCoreCommands } from "@/ext/registrations/commands";
 import { createLogsStatusItem } from "@/ui/statusbar/logs-button";
-import { createSidebarToggleItem } from "@/ui/statusbar/sidebar-toggle";
 import { CoreManager } from "@/core/manager";
-import { ChatViewProvider } from "@/ui/chat-view-provider";
 
 export async function bootstrap(context: vscode.ExtensionContext) {
   const logger = new Logger();
@@ -21,21 +19,13 @@ export async function bootstrap(context: vscode.ExtensionContext) {
   const disposables = registerCoreCommands(context, core, logger);
   context.subscriptions.push(...disposables);
 
-  // Register launcher view in Activity Bar (auto-opens panel and closes sidebar)
-  const provider = new ChatViewProvider(context, core, logger);
-  context.subscriptions.push(
-    vscode.window.registerWebviewViewProvider(ChatViewProvider.viewId, provider, {
-      webviewOptions: { retainContextWhenHidden: true },
-    })
-  );
+  // Sidebar Activity Bar view removed; no WebviewView provider registration
 
   // Optional: status bar button to open the Output channel
   const statusItem = createLogsStatusItem();
   context.subscriptions.push(statusItem);
 
-  // Sidebar toggle button (Status Bar)
-  const sidebarToggle = createSidebarToggleItem();
-  context.subscriptions.push(sidebarToggle);
+  // Sidebar toggle button removed
 
   // Show logs once on first activate (optional)
   // logger.show();

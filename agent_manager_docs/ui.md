@@ -6,6 +6,13 @@ Status: Implemented (sole UI)
 - Entry command: `codex.openChatPanel`
 - Activation: `onCommand:codex.openChatPanel`
 
+## No Activity Bar/Sidebar
+
+- No Activity Bar view container is contributed.
+- No sidebar `WebviewView` is registered.
+- The previous Activity Bar button and launcher view have been removed.
+- No Status Bar "Sidebar" toggle; `codex.toggleSidebar` command removed.
+
 ## Behavior
 
 - Opens a single Chat panel (subsequent invokes focus the existing panel).

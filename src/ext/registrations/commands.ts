@@ -37,12 +37,5 @@ export function registerCoreCommands(
     }
   );
 
-  const toggleSidebar = vscode.commands.registerCommand(
-    "codex.toggleSidebar",
-    async () => {
-      await vscode.commands.executeCommand("workbench.action.toggleSidebarVisibility");
-    }
-  );
-
-  return [showMenu, showLogs, openChatPanel, toggleSidebar];
+  return [showMenu, showLogs, openChatPanel];
 }

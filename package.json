@@ -14,7 +14,7 @@
   "publisher": "codex",
   "activationEvents": [
     "onStartupFinished",
-    "onViewContainer:codexChatContainer"
+    "onCommand:codex.openChatPanel"
   ],
   "contributes": {
     "commands": [
@@ -31,31 +31,8 @@
         "command": "codex.showLogs",
         "title": "Codex: Show Logs",
         "category": "Codex"
-      },
-      {
-        "command": "codex.toggleSidebar",
-        "title": "Codex: Toggle Sidebar",
-        "category": "Codex"
       }
-    ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "codexChatContainer",
-          "title": "Codex",
-          "icon": "media/codex-icon.svg"
-        }
-      ]
-    },
-    "views": {
-      "codexChatContainer": [
-        {
-          "id": "codex.chatView",
-          "name": "Codex Chat",
-          "icon": "media/codex-icon.svg"
-        }
-      ]
-    }
+    ]
   },
   "directories": {
     "doc": "docs"
