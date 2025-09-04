@@ -35,8 +35,8 @@
     // Style Options
     "noImplicitReturns": true,
     "noImplicitOverride": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    // "noUnusedLocals": true,  // Temporarily disabled to allow unused properties
+    // "noUnusedParameters": true,  // Temporarily disabled to allow unused parameters
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": true,
 

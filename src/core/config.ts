@@ -1,6 +1,8 @@
 // Configuration service for merging workspace/user config
 // This file handles configuration loading and management
 
+import { Logger } from "@/telemetry/logger.js";
+
 export type CodexConfig = {
   apiUrl: string;
   apiKey: string;
@@ -47,11 +49,16 @@ const DEFAULT_CONFIG: AppConfig = {
 
 export class ConfigService {
   private config: AppConfig = { ...DEFAULT_CONFIG };
+  private logger: Logger | null = null;
+
+  setLogger(logger: Logger): void {
+    this.logger = logger;
+  }
 
   async load(): Promise<void> {
     // MVP: keep defaults. Later: merge VS Code settings here.
     this.config = { ...DEFAULT_CONFIG };
-    console.log("ConfigService: Configuration loaded");
+    this.logger?.info("ConfigService: Configuration loaded");
   }
 
   getAll(): Readonly<AppConfig> {

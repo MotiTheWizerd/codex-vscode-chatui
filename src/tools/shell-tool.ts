@@ -1,1 +1,34 @@
-// Shell tool stub\n// This file implements a stub for shell command execution\n\nimport { Tool } from './tool-bus.js';\n\nexport class ShellTool implements Tool {\n  name = 'shell';\n  description = 'Execute shell commands';\n  parameters = {\n    command: {\n      type: 'string',\n      description: 'The shell command to execute'\n    }\n  };\n\n  async execute(args: any): Promise<any> {\n    // For MVP, we'll just return a stub response\n    // In a full implementation, this would execute the actual shell command\n    console.log(`ShellTool: Executing command \"${args.command}\"`);\n    \n    // Simulate command execution\n    return {\n      stdout: `Executed: ${args.command}\\nThis is a simulated response from the shell tool.`,\n      stderr: '',\n      exitCode: 0\n    };\n  }\n}
+// Shell tool stub
+// This file implements a stub for shell command execution
+
+import type { Tool } from "@/tools/tool-bus";
+import { Logger } from "@/telemetry/logger.js";
+
+export class ShellTool implements Tool {
+  name = "shell";
+  description = "Execute shell commands";
+  parameters = {
+    command: {
+      type: "string",
+      description: "The shell command to execute",
+    },
+  };
+  private logger: Logger | null = null;
+
+  setLogger(logger: Logger): void {
+    this.logger = logger;
+  }
+
+  async execute(args: any): Promise<any> {
+    // For MVP, we'll just return a stub response
+    // In a full implementation, this would execute the actual shell command
+    this.logger?.info(`ShellTool: Executing command "${args.command}"`);
+
+    // Simulate command execution
+    return {
+      stdout: `Executed: ${args.command}\nThis is a simulated response from the shell tool.`,
+      stderr: "",
+      exitCode: 0,
+    };
+  }
+}

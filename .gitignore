@@ -114,3 +114,6 @@ typings/
 
 # Windows
 Thumbs.db
+
+# Project backups
+project-backup/

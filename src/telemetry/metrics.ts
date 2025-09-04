@@ -2,6 +2,8 @@
 // Metrics collector for events, latencies, and failures
 // This file implements metrics collection for the extension
 
+import { Logger } from "@/telemetry/logger.js";
+
 export interface Metric {
   name: string;
   value: number;
@@ -11,6 +13,11 @@ export interface Metric {
 
 export class MetricsCollector {
   private metrics: Metric[] = [];
+  private logger: Logger | null = null;
+
+  setLogger(logger: Logger): void {
+    this.logger = logger;
+  }
 
   // Record a metric
   record(name: string, value: number, tags?: Record<string, string>): void {
@@ -25,7 +32,7 @@ export class MetricsCollector {
 
     // For MVP, we'll just log the metric
     // In a full implementation, this would send metrics to a telemetry service
-    console.log(`Metric recorded: ${name} = ${value}`, tags);
+    this.logger?.info(`Metric recorded: ${name} = ${value}`, tags);
   }
 
   // Record a timing metric

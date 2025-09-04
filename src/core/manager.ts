@@ -1,10 +1,11 @@
 // src/core/manager.ts
 import * as vscode from "vscode";
-import { EventBus } from "@core/event-bus";
-import { ConfigService } from "@core/config";
-import { PolicyGuard } from "@core/policy";
-import { DIContainer } from "@core/di";
+import { EventBus } from "@/core/event-bus";
+import { ConfigService } from "@/core/config";
+import { PolicyGuard } from "@/core/policy";
+import { DIContainer } from "@/core/di";
 import { Logger } from "@/telemetry/logger.js";
+import { SettingsManager } from "@/config/settings";
 
 export class CoreManager implements vscode.Disposable {
   private readonly eventBus = new EventBus();
@@ -18,7 +19,7 @@ export class CoreManager implements vscode.Disposable {
 
   constructor(
     private readonly context: vscode.ExtensionContext,
-    private readonly logger: Logger | null = null
+    public readonly logger: Logger | null = null
   ) {}
 
   async initialize(): Promise<void> {
@@ -26,6 +27,12 @@ export class CoreManager implements vscode.Disposable {
     this.logInfo("CoreManager: initializing...");
 
     await this.configService.load();
+    if (this.logger) {
+      this.configService.setLogger(this.logger);
+      this.policyGuard.setLogger(this.logger);
+      this.eventBus.setLogger(this.logger);
+      SettingsManager.setLogger(this.logger);
+    }
 
     this.di.register("eventBus", this.eventBus);
     this.di.register("configService", this.configService);
@@ -90,12 +97,11 @@ export class CoreManager implements vscode.Disposable {
     this.context.subscriptions.push(d);
   }
 
-  private logInfo(msg: string, meta?: any) {
+  private logInfo(msg: string, meta?: Record<string, unknown>) {
     this.logger?.info?.(msg, meta);
   }
   private logError(msg: string, err: unknown) {
     const m = err instanceof Error ? err.message : String(err);
     this.logger?.error?.(msg, { error: m });
-    console.error(msg, err);
   }
 }

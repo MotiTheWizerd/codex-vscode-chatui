@@ -9,9 +9,6 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:codex.openChat"
-  ],
   "main": "./dist/ext/extension.js",
   "type": "module",
   "contributes": {
@@ -29,7 +26,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "backup": "node src/scripts/package-project.js"
   },
   "keywords": [],
   "author": "",
@@ -37,6 +35,7 @@
   "devDependencies": {
     "@types/node": "^24.3.0",
     "@types/vscode": "^1.103.0",
+    "archiver": "^7.0.1",
     "typescript": "^5.9.2"
   }
 }

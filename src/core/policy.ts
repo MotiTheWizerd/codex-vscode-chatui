@@ -1,6 +1,13 @@
 // policy.ts — minimal policy guard
+import { Logger } from "@/telemetry/logger.js";
+
 export class PolicyGuard {
   private requests = new Map<string, number[]>();
+  private logger: Logger | null = null;
+
+  setLogger(logger: Logger): void {
+    this.logger = logger;
+  }
 
   async initialize(): Promise<void> {
     // Nothing yet — placeholder for loading persisted policy configs
@@ -10,7 +17,7 @@ export class PolicyGuard {
     this.requests.clear();
   }
   isFeatureAllowed(feature: string): boolean {
-    console.log(`PolicyGuard: Checking if feature "${feature}" is allowed`);
+    this.logger?.info(`PolicyGuard: Checking if feature "${feature}" is allowed`);
     return true; // MVP: allow all
   }
 
@@ -24,7 +31,7 @@ export class PolicyGuard {
     const recent = history.filter((ts) => now - ts < windowMs);
     // prune old entries
     this.requests.set(identifier, recent);
-    console.log(
+    this.logger?.info(
       `PolicyGuard: ${recent.length}/${limit} requests in window for "${identifier}"`
     );
     return recent.length < limit;
@@ -35,6 +42,6 @@ export class PolicyGuard {
     const history = this.requests.get(identifier) ?? [];
     history.push(now);
     this.requests.set(identifier, history);
-    console.log(`PolicyGuard: Recorded request for "${identifier}"`);
+    this.logger?.info(`PolicyGuard: Recorded request for "${identifier}"`);
   }
 }

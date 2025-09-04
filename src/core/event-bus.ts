@@ -1,8 +1,15 @@
 // event-bus.ts
+import { Logger } from "@/telemetry/logger.js";
+
 type EventHandler = (...args: unknown[]) => void;
 
 export class EventBus {
   private handlers = new Map<string, Set<EventHandler>>();
+  private logger: Logger | null = null;
+
+  setLogger(logger: Logger): void {
+    this.logger = logger;
+  }
 
   subscribe(event: string, handler: EventHandler): void {
     if (!this.handlers.has(event)) {
@@ -22,7 +29,7 @@ export class EventBus {
       try {
         handler(...args);
       } catch (err) {
-        console.error(`Error in event handler for "${event}"`, err);
+        this.logger?.error(`Error in event handler for "${event}"`, { error: err });
       }
     }
   }

@@ -1,6 +1,6 @@
 // src/extension.ts
 import * as vscode from "vscode";
-import { CoreManager } from "@core/manager";
+import { CoreManager } from "@/core/manager";
 import { Logger } from "@/telemetry/logger.js";
 
 let core: CoreManager | null = null;

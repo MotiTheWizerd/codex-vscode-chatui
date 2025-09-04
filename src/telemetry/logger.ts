@@ -17,27 +17,27 @@ export class Logger {
   }
 
   // Log a debug message
-  debug(message: string, metadata?: any): void {
+  debug(message: string, metadata?: Record<string, unknown>): void {
     this.log("debug", message, metadata);
   }
 
   // Log an info message
-  info(message: string, metadata?: any): void {
+  info(message: string, metadata?: Record<string, unknown>): void {
     this.log("info", message, metadata);
   }
 
   // Log a warning message
-  warn(message: string, metadata?: any): void {
+  warn(message: string, metadata?: Record<string, unknown>): void {
     this.log("warn", message, metadata);
   }
 
   // Log an error message
-  error(message: string, metadata?: any): void {
+  error(message: string, metadata?: Record<string, unknown>): void {
     this.log("error", message, metadata);
   }
 
   // Generic log method
-  private log(level: LogEntry["level"], message: string, metadata?: any): void {
+  private log(level: LogEntry["level"], message: string, metadata?: Record<string, unknown>): void {
     const timestamp = new Date();
 
     // Write to output channel

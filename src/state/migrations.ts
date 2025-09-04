@@ -24,9 +24,6 @@ export class MigrationManager {
     targetVersion: number,
     data: any
   ): any {
-    // For MVP, we'll just return the data as-is
-    // In a full implementation, this would apply the necessary migrations
-
     // Find migrations to apply
     const migrationsToApply = this.migrations.filter(
       (m) => m.version > currentVersion && m.version <= targetVersion
@@ -35,13 +32,17 @@ export class MigrationManager {
     // Apply migrations in order
     let result = data;
     for (const migration of migrationsToApply) {
-      result = migration.up(result);
+      try {
+        result = migration.up(result);
+      } catch (error) {
+        console.error(`Error applying migration ${migration.version}:`, error);
+        throw new Error(`Failed to apply migration ${migration.version}`);
+      }
     }
 
     return result;
   }
 
-  // Get the latest version
   // Get the latest version
   getLatestVersion(): number {
     const last = this.migrations.at(-1);
@@ -53,10 +54,50 @@ export class MigrationManager {
 export const migrationManager = new MigrationManager();
 
 // Register migrations
-// For MVP, we'll register a single migration for the initial schema
+// Initial schema migration
 migrationManager.register({
   version: 1,
   description: "Initial schema",
-  up: (data: any) => data,
+  up: (data: any) => {
+    // Ensure data has the basic structure
+    if (!data.sessions) {
+      data.sessions = {};
+    }
+    if (!data.currentSessionId) {
+      data.currentSessionId = null;
+    }
+    return data;
+  },
+  down: (data: any) => data,
+});
+
+// Add timestamp migration
+migrationManager.register({
+  version: 2,
+  description: "Add timestamp fields",
+  up: (data: any) => {
+    // Ensure all sessions have timestamp fields
+    if (data.sessions) {
+      for (const sessionId in data.sessions) {
+        const session = data.sessions[sessionId];
+        if (!session.createdAt) {
+          session.createdAt = new Date().toISOString();
+        }
+        if (!session.updatedAt) {
+          session.updatedAt = new Date().toISOString();
+        }
+        
+        // Ensure all messages have timestamps
+        if (session.messages) {
+          for (const message of session.messages) {
+            if (!message.timestamp) {
+              message.timestamp = new Date().toISOString();
+            }
+          }
+        }
+      }
+    }
+    return data;
+  },
   down: (data: any) => data,
 });

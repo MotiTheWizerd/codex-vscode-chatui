@@ -2,6 +2,7 @@
 // This file manages session persistence using VS Code's workspace storage
 
 import * as vscode from 'vscode';
+import { Logger } from "@/telemetry/logger.js";
 
 export interface ChatMessage {
   id: string;
@@ -21,9 +22,11 @@ export class SessionStore {
   private context: vscode.ExtensionContext;
   private sessions: Map<string, ChatSession> = new Map();
   private currentSessionId: string | null = null;
+  private logger: Logger | null = null;
 
-  constructor(context: vscode.ExtensionContext) {
+  constructor(context: vscode.ExtensionContext, logger: Logger | null = null) {
     this.context = context;
+    this.logger = logger;
     this.loadSessions();
   }
 
@@ -45,21 +48,23 @@ export class SessionStore {
     
     // Set the current session ID if it exists
     this.currentSessionId = this.context.workspaceState.get('codex.currentSessionId', null);
+    this.logger?.info("Sessions loaded", { count: this.sessions.size });
   }
 
   // Save sessions to storage
-  private saveSessions(): void {
+  private async saveSessions(): Promise<void> {
     const sessionsObj: any = {};
     for (const [id, session] of this.sessions.entries()) {
       sessionsObj[id] = session;
     }
     
-    this.context.workspaceState.update('codex.sessions', sessionsObj);
-    this.context.workspaceState.update('codex.currentSessionId', this.currentSessionId);
+    await this.context.workspaceState.update('codex.sessions', sessionsObj);
+    await this.context.workspaceState.update('codex.currentSessionId', this.currentSessionId);
+    this.logger?.info("Sessions saved", { count: this.sessions.size });
   }
 
   // Create a new session
-  createSession(): ChatSession {
+  async createSession(): Promise<ChatSession> {
     const id = Date.now().toString();
     const session: ChatSession = {
       id,
@@ -70,8 +75,9 @@ export class SessionStore {
     
     this.sessions.set(id, session);
     this.currentSessionId = id;
-    this.saveSessions();
+    await this.saveSessions();
     
+    this.logger?.info("New session created", { sessionId: id });
     return session;
   }
 
@@ -85,14 +91,16 @@ export class SessionStore {
   }
 
   // Add a message to the current session
-  addMessageToCurrentSession(message: Omit<ChatMessage, 'id' | 'timestamp'>): ChatMessage {
+  async addMessageToCurrentSession(message: Omit<ChatMessage, 'id' | 'timestamp'>): Promise<ChatMessage> {
     if (!this.currentSessionId) {
-      this.createSession();
+      await this.createSession();
     }
     
     const session = this.getCurrentSession();
     if (!session) {
-      throw new Error('No current session');
+      const error = new Error('No current session');
+      this.logger?.error("Failed to add message - no current session", { error });
+      throw error;
     }
     
     const chatMessage: ChatMessage = {
@@ -103,8 +111,9 @@ export class SessionStore {
     
     session.messages.push(chatMessage);
     session.updatedAt = new Date();
-    this.saveSessions();
+    await this.saveSessions();
     
+    this.logger?.info("Message added to session", { sessionId: session.id, messageId: chatMessage.id });
     return chatMessage;
   }
 
@@ -114,17 +123,19 @@ export class SessionStore {
   }
 
   // Clear the current session
-  clearCurrentSession(): void {
+  async clearCurrentSession(): Promise<void> {
     if (this.currentSessionId) {
       this.sessions.delete(this.currentSessionId);
       this.currentSessionId = null;
-      this.saveSessions();
+      await this.saveSessions();
+      this.logger?.info("Current session cleared");
     }
   }
 
   // Dispose method for VS Code's disposable pattern
-  dispose(): void {
+  async dispose(): Promise<void> {
     // Save sessions before disposal
-    this.saveSessions();
+    await this.saveSessions();
+    this.logger?.info("Session store disposed");
   }
 }
