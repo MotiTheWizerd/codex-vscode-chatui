@@ -1,0 +1,20 @@
+{
+  "includePatterns": [
+    "src/**/*.ts"
+  ],
+  "excludePatterns": [
+    "node_modules/**",
+    "dist/**",
+    "**/*.test.*",
+    "**/*.spec.*"
+  ],
+  "thresholds": {
+    "lineCount": 250,
+    "functionLength": 50,
+    "nestingDepth": 5
+  },
+  "output": {
+    "format": "markdown",
+    "file": "code-analysis-report.md"
+  }
+}

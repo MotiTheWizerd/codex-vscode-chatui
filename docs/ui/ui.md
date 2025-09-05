@@ -52,16 +52,21 @@ Status: Implemented (sole UI)
   - `$(comment-discussion) Open Codex Chat` → runs `codex.openChatPanel`
   - `$(output) Open Codex Logs` → shows output channel
 
-## Asset Structure
+## Asset & Script Structure
 
-Assets are organized in `media/chat/`:
-- `index.html` - Main HTML template
-- `styles/` - CSS stylesheets
-- `js/` - JavaScript files
-- `html/` - HTML fragments (head, header, messages, footer)
+Assets live under `media/chat/` and compiled scripts under `dist/ui/`:
+- `media/chat/index.html` - Main HTML template
+- `media/chat/styles/` - CSS stylesheets
+- `media/chat/html/` - HTML fragments (head, header, messages, footer)
+- `dist/ui/bridge.js` - Webview bridge (global `window.CodexBridge`)
+- `dist/ui/elements-registry.js` - Registry (global `window.ElementsRegistry`)
+- `dist/ui/controllers.js` - Controllers (global `window.MessageListController`, `window.ComposerController`)
+- `dist/ui/renderer.js` - Renderer (global `window.Renderer`)
+- `dist/ui/bootstrap.js` - Bootstrap logic (no globals)
 
 ## Development Workflow
 
 - Assets are watched for changes during development
 - Panel auto-refreshes when assets change
+- Scripts from `dist/ui` are injected as module scripts with CSP nonce
 - Error handling with fallback HTML when template fails to load

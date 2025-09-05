@@ -3,8 +3,8 @@
 ## Getting Started
 
 1. Clone the repository
-2. Run `npm install` to install dependencies
-3. Run `npm run build` to compile TypeScript files
+2. Run `pnpm install` to install dependencies
+3. Run `pnpm run build` to compile TypeScript files
 4. Open the project in VS Code
 5. Press F5 to launch the extension in a new Extension Development Host window
 
@@ -78,8 +78,8 @@ Currently, the project doesn't have automated tests. When adding tests:
 
 ## Building
 
-- Run `npm run build` to compile TypeScript to JavaScript
-- Run `npm run watch` to continuously compile TypeScript files
+- Run `pnpm run build` to compile TypeScript to JavaScript
+- Run `pnpm run watch` to continuously compile TypeScript files
 
 ## Documentation
 

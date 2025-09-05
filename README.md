@@ -13,7 +13,7 @@ AI chat extension for VS Code powered by Codex.
 ## Installation
 
 1. Clone this repository
-2. Run `npm install` to install dependencies
+2. Run `pnpm install` to install dependencies
 3. Press F5 to launch the extension in a new Extension Development Host window
 
 ## Development

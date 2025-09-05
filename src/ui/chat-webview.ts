@@ -2,6 +2,7 @@
 import * as vscode from "vscode";
 import { CoreManager } from "@/core/manager";
 import { Logger } from "@/telemetry/logger.js";
+import { Events } from "@core/events";
 
 export class ChatWebview implements vscode.Disposable {
   private disposables: vscode.Disposable[] = [];
@@ -21,7 +22,10 @@ export class ChatWebview implements vscode.Disposable {
       {
         enableScripts: true,
         retainContextWhenHidden: true,
-        localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, "media")],
+        localResourceRoots: [
+          vscode.Uri.joinPath(context.extensionUri, "media"),
+          vscode.Uri.joinPath(context.extensionUri, "dist"),
+        ],
       }
     );
 
@@ -69,29 +73,9 @@ export class ChatWebview implements vscode.Disposable {
         if (type === "chat.userMessage") {
           const text: string | undefined = msg?.payload?.text ?? msg?.text;
           if (!text || !text.trim()) return;
-          const di = this.core.diContainer;
-          if (di.has("sessionStore")) {
-            const store = di.resolve<import("@/state/session-store").SessionStore>(
-              "sessionStore"
-            );
-            await store.addMessageToCurrentSession({ role: "user", content: text });
-          }
-          // Mock assistant echo transport: respond after a short delay
-          setTimeout(async () => {
-            try {
-              const reply = `Echo: ${text}`;
-              if (di.has("sessionStore")) {
-                const store = di.resolve<import("@/state/session-store").SessionStore>(
-                  "sessionStore"
-                );
-                await store.addMessageToCurrentSession({ role: "assistant", content: reply });
-              }
-              this.panel.webview.postMessage({ type: "assistant.commit", text: reply });
-            } catch (e) {
-              const m = e instanceof Error ? e.message : String(e);
-              this.logger?.error?.("mock assistant failed", { error: m });
-            }
-          }, 250);
+          // Forward to EventBus; CoreManager handles policies, persistence, and transport
+          const streaming = this.core.config.getFeatures().streaming;
+          this.core.eventBusInstance.publish(Events.UiSend, { text, streaming });
           return;
         }
       } catch (e) {
@@ -102,6 +86,51 @@ export class ChatWebview implements vscode.Disposable {
     const cleanup = this.panel.onDidDispose(() => this.dispose());
 
     this.disposables.push(recv, cleanup);
+
+    // Subscribe to transport events to forward updates to the webview
+    const onToken = (payload: import("@core/events").TransportTokenPayload) => {
+      try {
+        this.panel.webview.postMessage({ type: "assistant.token", token: payload.token });
+      } catch (e) {
+        const m = e instanceof Error ? e.message : String(e);
+        this.logger?.warn?.("post assistant.token failed", { error: m });
+      }
+    };
+    const onComplete = async (
+      _payload: import("@core/events").TransportCompletePayload
+    ) => {
+      try {
+        // Look up the last assistant message and post commit
+        const di = this.core.diContainer;
+        if (di.has("sessionStore")) {
+          const store = di.resolve<import("@/state/session-store").SessionStore>(
+            "sessionStore"
+          );
+          const session = store.getCurrentSession();
+          const last = session?.messages.slice().reverse().find((m) => m.role === "assistant");
+          const text = last?.content ?? "";
+          if (text) this.panel.webview.postMessage({ type: "assistant.commit", text });
+        }
+      } catch (e) {
+        const m = e instanceof Error ? e.message : String(e);
+        this.logger?.warn?.("assistant.commit post failed", { error: m });
+      }
+    };
+    const onError = (payload: import("@core/events").TransportErrorPayload) => {
+      this.logger?.error?.("transport error", { error: payload.error });
+      // Optional: surface an error banner via webview in future
+    };
+    const bus = this.core.eventBusInstance;
+    bus.subscribe(Events.TransportToken, onToken as any);
+    bus.subscribe(Events.TransportComplete, onComplete as any);
+    bus.subscribe(Events.TransportError, onError as any);
+    this.disposables.push(
+      new vscode.Disposable(() => {
+        bus.unsubscribe(Events.TransportToken, onToken as any);
+        bus.unsubscribe(Events.TransportComplete, onComplete as any);
+        bus.unsubscribe(Events.TransportError, onError as any);
+      })
+    );
 
     // initial HTML
     void this.setHtml(context);
@@ -219,9 +248,42 @@ export class ChatWebview implements vscode.Disposable {
         .map((href) => `<link rel="stylesheet" href="${href}">`)
         .join("\n");
 
-      const scriptTags = (await Promise.all(jsUris.map(toUriWithV)))
-        .map((src) => `<script nonce="${nonce}" src="${src}"></script>`) // CSP nonce
+      // Optionally inject compiled UI scripts first if present (classic scripts attaching globals)
+      const distUiDir = vscode.Uri.joinPath(context.extensionUri, "dist", "ui");
+      const distBridge = vscode.Uri.joinPath(distUiDir, "bridge.js");
+      const distRegistry = vscode.Uri.joinPath(distUiDir, "elements-registry.js");
+      const distControllers = vscode.Uri.joinPath(distUiDir, "controllers.js");
+      const distRenderer = vscode.Uri.joinPath(distUiDir, "renderer.js");
+      const distBootstrap = vscode.Uri.joinPath(distUiDir, "bootstrap.js");
+      const distScripts: vscode.Uri[] = [];
+      try {
+        await vscode.workspace.fs.stat(distBridge);
+        distScripts.push(distBridge);
+      } catch {}
+      try {
+        await vscode.workspace.fs.stat(distRegistry);
+        distScripts.push(distRegistry);
+      } catch {}
+      try {
+        await vscode.workspace.fs.stat(distControllers);
+        distScripts.push(distControllers);
+      } catch {}
+      try {
+        await vscode.workspace.fs.stat(distRenderer);
+        distScripts.push(distRenderer);
+      } catch {}
+      try {
+        await vscode.workspace.fs.stat(distBootstrap);
+        distScripts.push(distBootstrap);
+      } catch {}
+
+      const distScriptTags = (await Promise.all(distScripts.map(toUriWithV)))
+        .map((src) => `<script type="module" nonce="${nonce}" src="${src}"></script>`)
         .join("\n");
+      const classicScriptTags = (await Promise.all(jsUris.map(toUriWithV)))
+        .map((src) => `<script nonce="${nonce}" src="${src}"></script>`) // classic scripts
+        .join("\n");
+      const scriptTags = `${distScriptTags}\n${classicScriptTags}`;
 
       // load HTML template and inject
       const indexUri = vscode.Uri.joinPath(chatDir, "index.html");

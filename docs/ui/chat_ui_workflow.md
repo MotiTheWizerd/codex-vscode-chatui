@@ -41,19 +41,24 @@ The chat panel includes:
 ## Message Communication
 
 ### Extension to Webview
- - Uses `webview.postMessage()` to send messages to the webview
- - Webview receives messages through a small `MessageBridge` wrapper
+- Uses `webview.postMessage()` to send messages to the webview
+- Webview receives messages through a small `MessageBridge` wrapper
+- Transport events are forwarded:
+  - `assistant.token` for streaming tokens
+  - `assistant.commit` for final assistant content
 
 ### Webview to Extension
- - Uses `MessageBridge.post(type, payload)` (wraps `acquireVsCodeApi().postMessage()`)
- - Extension receives messages through `webview.onDidReceiveMessage()`
+- Uses `MessageBridge.post(type, payload)` (wraps `acquireVsCodeApi().postMessage()`)
+- Extension receives messages through `webview.onDidReceiveMessage()` and publishes to EventBus
 
 ## Event Flow: Sending a Message
 
 1. User types a message in the chat box (webview HTML/JS)
 2. `MessageBridge.post('chat.userMessage', { text })` sends the message event to the extension
 3. ChatWebview receives the message through `onDidReceiveMessage`
-4. Message is published via EventBus or processed directly
+4. ChatWebview publishes `Events.UiSend` with `{ text, streaming }`
+5. CoreManager handles policy checks, persistence, and transport
+6. Core publishes `transport:*` events; ChatWebview forwards these to the webview
 
 ## Asset Management
 

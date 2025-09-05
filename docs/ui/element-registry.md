@@ -39,10 +39,10 @@ The Element Registry is the single source of truth for UI islands inside the Cha
 
 ## Files
 
-- `media/chat/js/01_bridge.js` – MessageBridge wrapper
-- `media/chat/js/02_registry.js` – ElementsRegistry
-- `media/chat/js/03_controllers.js` – MessageListController, ComposerController
-- `media/chat/js/04_renderer.js` – Renderer (registers elements and routes events)
+- `src/ui/bridge.ts` → compiles to `dist/ui/bridge.js` (MessageBridge globals)
+- `src/ui/elements-registry.ts` → compiles to `dist/ui/elements-registry.js`
+- `src/ui/controllers.ts` → compiles to `dist/ui/controllers.js` (MessageListController, ComposerController)
+- `src/ui/renderer.ts` → compiles to `dist/ui/renderer.js` (Renderer globals)
 - `media/chat/js/main.js` – Tiny bootstrap only
 
 ## Notes
@@ -50,4 +50,4 @@ The Element Registry is the single source of truth for UI islands inside the Cha
 - Idempotent mounts prevent duplicate listeners on refresh/reload.
 - Schema version is included in `ui.ready` payload (`schemaVersion: 1`) to prevent silent drift.
 - Error UX: Controllers should keep composer enabled; transport failures should surface as a small toast (future).
-
+- The webview injects `dist/ui/bridge.js` and `dist/ui/renderer.js` before other scripts so `window.CodexBridge` and `window.Renderer` are available to `main.js`.
