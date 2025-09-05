@@ -2,7 +2,7 @@
 // This file handles communication with the Codex server
 
 import { ConfigService } from "@core/config";
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 import { retry, safeFetch } from "@/transport/http";
 import { serializeErr } from "@/telemetry/err";
 import { ProtocolError } from "@/telemetry/errors";

@@ -29,6 +29,8 @@ export interface ComposerOptions {
 export interface Composer {
   getValue(): string;
   getAttachments(): ComposerAttachment[];
+  // Stage 1 mentions: collect file paths from chips
+  getEmbeddedFiles(): string[];
   setValue(v: string): void;
   clearAttachments(): void;
   focus(): void;

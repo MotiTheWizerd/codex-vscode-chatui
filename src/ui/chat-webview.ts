@@ -1,7 +1,7 @@
 // ui/chat-webview.ts
 import * as vscode from "vscode";
 import { CoreManager } from "@/core/manager";
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 import { Events } from "@core/events";
 
 export class ChatWebview implements vscode.Disposable {
@@ -73,12 +73,64 @@ export class ChatWebview implements vscode.Disposable {
         if (type === "chat.userMessage") {
           const text: string | undefined = msg?.payload?.text ?? msg?.text;
           const attachments: unknown[] | undefined = msg?.payload?.attachments ?? msg?.attachments;
+          const embeddedFiles: string[] | undefined = msg?.payload?.embeddedFiles ?? msg?.embeddedFiles;
           const hasText = !!(text && text.trim());
           const hasAttachments = Array.isArray(attachments) && attachments.length > 0;
-          if (!hasText && !hasAttachments) return;
+          const hasEmbedded = Array.isArray(embeddedFiles) && embeddedFiles.length > 0;
+          if (!hasText && !hasAttachments && !hasEmbedded) return;
           // Forward to EventBus; CoreManager handles policies, persistence, and transport
           const streaming = this.core.config.getFeatures().streaming;
-          this.core.eventBusInstance.publish(Events.UiSend, { text: text ?? "", streaming, options: hasAttachments ? { attachments } : undefined });
+          const options: Record<string, unknown> = {};
+          if (hasAttachments) options['attachments'] = attachments;
+          if (hasEmbedded) options['embeddedFiles'] = embeddedFiles;
+          this.core.eventBusInstance.publish(Events.UiSend, { text: text ?? "", streaming, options: Object.keys(options).length ? options : undefined });
+          return;
+        }
+
+        // Files bridge: index/search/listChildren/stat
+        if (type === 'files/index' || type === 'files/search' || type === 'files/listChildren' || type === 'files/stat' || type === 'files/resolveDrop') {
+          const reqId: string | undefined = msg?.payload?.reqId ?? msg?.reqId;
+          const limit: number | undefined = msg?.payload?.limit ?? msg?.limit;
+          const q: string | undefined = msg?.payload?.q ?? msg?.q;
+          const path: string | undefined = msg?.payload?.path ?? msg?.path;
+          const dropped: string[] | undefined = msg?.payload?.items ?? msg?.items;
+          const files = this.core.filesService;
+          const t0 = Date.now();
+          if (!files) {
+            this.panel.webview.postMessage({ type: 'files/result', op: 'search', items: [], cursor: null, meta: { indexed: 0, complete: false, took_ms: Date.now() - t0, warnings: ['FilesService not available'] }, reqId });
+            return;
+          }
+          try {
+            if (type === 'files/index') {
+              const items = files.indexSlice(Math.max(1, Math.min(500, limit ?? 200)));
+              const sum = files.summary();
+              this.panel.webview.postMessage({ type: 'files/result', op: 'index', items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [] }, reqId });
+            } else if (type === 'files/search') {
+              const items = files.search(q ?? '', Math.max(1, Math.min(200, limit ?? 50)));
+              const sum = files.summary();
+              this.panel.webview.postMessage({ type: 'files/result', op: 'search', items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [] }, reqId });
+            } else if (type === 'files/listChildren') {
+              const items = files.listChildren(path ?? '', Math.max(1, Math.min(500, limit ?? 200)));
+              const sum = files.summary();
+              this.panel.webview.postMessage({ type: 'files/result', op: 'listChildren', items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [] }, reqId });
+            } else if (type === 'files/stat') {
+              const item = await files.stat(path ?? '');
+              const sum = files.summary();
+              const items = item ? [item] : [];
+              this.panel.webview.postMessage({ type: 'files/result', op: 'stat', items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [] }, reqId });
+            } else if (type === 'files/resolveDrop') {
+              const res = await files.resolveDrop(Array.isArray(dropped) ? dropped : [], Math.max(1, Math.min(200, limit ?? 200)));
+              const sum = files.summary();
+              const warnings: string[] = [];
+              if (res.bad.length) warnings.push(`${res.bad.length} items rejected`);
+              if (res.truncated) warnings.push('truncated');
+              this.panel.webview.postMessage({ type: 'files/result', op: 'resolveDrop', items: res.items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings }, reqId });
+            }
+          } catch (e) {
+            const sum = files.summary();
+            const err = e instanceof Error ? e.message : String(e);
+            this.panel.webview.postMessage({ type: 'files/result', op: 'search', items: [], cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [err] }, reqId });
+          }
           return;
         }
       } catch (e) {

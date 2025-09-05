@@ -14,11 +14,13 @@ Implemented and used as the sole UI for chat.
 - `src/ui/chat-panel-manager.ts` — Manages a single open instance and reveal behavior.
 - `media/chat/index.html` — HTML template with placeholders for assets and fragments.
 - `media/chat/styles/*.css` — Stylesheets included in alphabetical order.
-- `media/chat/js/*.js` — Scripts included in alphabetical order with CSP nonce (excluding bridge/renderer, now compiled from TS).
-- `dist/ui/bridge.js`, `dist/ui/renderer.js` — Compiled TS scripts injected first to expose `window.CodexBridge` and `window/Renderer`.
-- `dist/ui/elements-registry.js`, `dist/ui/controllers.js` — Compiled TS scripts for registry and controllers.
-- `dist/ui/bootstrap.js` — Compiled TS bootstrap orchestrates startup and handshake.
-- `dist/ui/composer-bootstrap.js` — Mounts the React Composer into `#composer-root` and bridges `chat.userMessage`.
+- `media/chat/js/*.js` — Legacy scripts (mostly replaced by compiled TypeScript modules).
+- `dist/ui/bridge.js` — Compiled TypeScript script that injects `window.CodexBridge` for message passing.
+- `dist/ui/elements-registry.js` — Compiled TypeScript script for UI component registry.
+- `dist/ui/controllers.js` — Compiled TypeScript script containing UI controllers.
+- `dist/ui/renderer.js` — Compiled TypeScript script that handles rendering logic.
+- `dist/ui/bootstrap.js` — Compiled TypeScript script that orchestrates startup and handshake.
+- `dist/ui/composer-bootstrap.js` — Compiled TypeScript script that mounts the DOM Composer and bridges `chat.userMessage`.
 - `media/chat/html/{head,header,messages,footer}/**/*.html` — Safe fragments injected into the template.
 
 ## Behavior
@@ -28,7 +30,8 @@ Implemented and used as the sole UI for chat.
 - Watches `media/chat/**/*.{css,js}` and `media/chat/html/**/*.html` during development to refresh the panel.
 - Uses a factory pattern for instantiation with proper disposal handling.
 - UI bootstrap: `dist/ui/bootstrap.js` waits for globals, constructs a `Renderer`, calls `mountAll(document)`, posts `ui.ready`, and forwards extension messages to `renderer.handle()`.
- - Send/Stream: Composer posts `chat.userMessage` → ChatWebview publishes `Events.UiSend` → CoreManager routes to transport; tokens and completion are forwarded back to the webview as `assistant.token` and `assistant.commit`.
+- Send/Stream: Composer posts `chat.userMessage` → ChatWebview publishes `Events.UiSend` → CoreManager routes to transport; tokens and completion are forwarded back to the webview as `assistant.token` and `assistant.commit`.
+  - Stage 1 mentions: `embeddedFiles` array (workspace‑relative paths) is forwarded in `options.embeddedFiles`.
 
 ## Composer Assets
 
@@ -43,7 +46,7 @@ Implemented and used as the sole UI for chat.
 - **Error Handling**: Graceful fallback when HTML template fails to load
 - **Resource Cleanup**: Proper disposal of watchers and event listeners
 - **Element Registry**: `Renderer` owns registration; `ElementsRegistry` mounts/updates/disposes controllers
-- **Static Folder**: `media/chat/js` contains no runtime logic; all webview logic lives in TypeScript modules compiled to `dist/ui`.
+- **Static Folder**: `media/chat/js` contains legacy scripts; all modern webview logic lives in TypeScript modules compiled to `dist/ui`.
 
 ## Design Principles
 

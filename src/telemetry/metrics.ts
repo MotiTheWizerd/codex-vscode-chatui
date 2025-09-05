@@ -2,7 +2,7 @@
 // Metrics collector for events, latencies, and failures
 // This file implements metrics collection for the extension
 
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 
 export interface Metric {
   name: string;

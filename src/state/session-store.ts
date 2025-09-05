@@ -2,7 +2,7 @@
 // This file manages session persistence using VS Code's workspace storage
 
 import * as vscode from 'vscode';
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 import type {
   ChatMessage,
   ChatSession,

@@ -19,23 +19,24 @@ src/
   modules/
     composer/
       index.ts          # Public API (init, dispose, etc.)
-      composer.tsx      # React component with textarea, toolbar, events
+      composer-dom.ts   # Framework-free DOM composer (current implementation)
       markdown.ts       # Markdown helpers (bold, italic, code, list…)
       sanitize.ts       # Paste normalization/sanitization
       slash.ts          # Slash command registry (optional, extend later)
       types.ts          # Types for Composer, events, options
-      bridge.ts         # Webview ↔ VS Code message bridge
-      style.css         # Scoped CSS for composer only
+      bridge.ts         # (legacy) webview ↔ VS Code message bridge
+      style.css         # (legacy) scoped CSS (migrated to media/chat/styles)
       README.md         # Module documentation
 ```
 
 ## Usage
 
 ```ts
-import { attachComposer } from "@/modules/composer/bridge";
+import { initComposer } from "@/modules/composer";
 
 // In your webview script after DOM ready
-attachComposer();
+const host = document.getElementById('composer-root')!;
+const composer = initComposer(host, { placeholder: 'Message…' });
 ```
 
 **HTML host:**
@@ -44,7 +45,7 @@ attachComposer();
 <div id="composer"></div>
 ```
 
-**Events posted to extension:** `{ type: "user.send", text }`
+**Events posted to extension (via bootstrap wiring):** `chat.userMessage { text, attachments }`
 
 ## Implementation Details
 
@@ -55,7 +56,7 @@ Each file in the module has a specific responsibility:
 - `markdown.ts` - Markdown transformation functions
 - `sanitize.ts` - Paste normalization/sanitization
 - `slash.ts` - Slash command helper
-- `composer.tsx` - Main React component
+- `composer-dom.ts` - DOM composer (contenteditable) with paste sanitization and attachments
 - `bridge.ts` - VS Code webview integration
 - `style.css` - Scoped CSS styles
 
@@ -66,12 +67,13 @@ Each file in the module has a specific responsibility:
 3. **Security**: Paste sanitization and safe Markdown transformations
 4. **Performance**: Lightweight implementation with minimal dependencies
 5. **VS Code Integration**: Follows VS Code theming and API conventions
+6. **Alias Imports**: Use path aliases (e.g., `@/modules/composer`)
 
 ## Future Extensions
 
 The module is designed to be easily extended with additional features:
 - Mentions support
-- Attachment handling
+- Richer attachment handling and non-image types
 - More sophisticated formatting options
 - Advanced slash commands
 

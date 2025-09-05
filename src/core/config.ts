@@ -1,7 +1,7 @@
 // Configuration service for merging workspace/user config
 // This file handles configuration loading and management
 
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 
 export type CodexConfig = {
   apiUrl: string;

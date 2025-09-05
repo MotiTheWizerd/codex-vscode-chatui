@@ -2,38 +2,44 @@
 
 ## Overview
 
-The `sanitize.ts` file contains functions for normalizing and sanitizing pasted content. Its primary purpose is to ensure that only plain text is inserted into the composer, preventing potentially unsafe HTML or other content from being pasted into the webview.
+The `sanitize.ts` module provides two primary responsibilities:
 
-## Implementation
+- Sanitize arbitrary HTML to a safe, limited subset suitable for the webview editor
+- Normalize pasted clipboard content into sanitized HTML, or escaped text with `<br>` line breaks
 
-```ts
-// src/modules/composer/sanitize.ts
-// Normalize paste → plain text only for safety in webview
+This defends the webview against script injection and unsafe attributes while preserving user intent for common formatting.
 
-export function normalizePaste(ev: ClipboardEvent): string | null {
-  const dt = ev.clipboardData;
-  if (!dt) return null;
-  const text = dt.getData("text/plain");
-  return text ?? "";
-}
-```
+## Key Functions
 
-## Functions
+### sanitizeHtml(inputHtml: string): string
+Parses the provided HTML and removes unsafe tags and attributes.
 
-### normalizePaste(event)
+- Allowed tags: `B, STRONG, I, EM, U, S, CODE, PRE, BLOCKQUOTE, BR, P, DIV, SPAN, UL, OL, LI, A`
+- Removes: `SCRIPT, STYLE, IFRAME, OBJECT, EMBED, META, LINK`
+- Strips event handlers (attributes starting with `on`) and inline `style`
+- For URL-bearing attributes (`href`, `src`), only allows safe schemes (`http:`, `https:`, `mailto:`, `about:`, `data:`, `file:`)
+- Keeps non-dangerous attributes: `class`, `title`, `alt`
 
-Extracts and normalizes plain text from a ClipboardEvent:
+Returns sanitized HTML as a string.
 
-1. Gets the clipboard data from the event
-2. If no clipboard data is available, returns null
-3. Extracts plain text data from the clipboard
-4. Returns the text or an empty string if no text is available
+### normalizePasteToHtml(ev: ClipboardEvent): string | null
+Converts clipboard data into sanitized HTML.
 
-This function ensures that only plain text is extracted from paste events, ignoring any HTML or other formatted content that might be in the clipboard.
+Order of preference:
+- If clipboard has `text/html`: sanitize and return it.
+- Else use `text/plain`, HTML‑escape it, and replace line breaks with `<br>`.
+- Returns `null` if no clipboard data is available.
+
+### normalizePaste(ev: ClipboardEvent): string | null
+Back‑compat helper that extracts plain text only; used by older legacy composer paths. New DOM composer uses `normalizePasteToHtml`.
+
+## Usage Notes
+
+- The DOM composer inserts the returned HTML at the caret using Selection/Range APIs.
+- Always pair `normalizePasteToHtml` with `sanitizeHtml` when accepting HTML input from any source.
 
 ## Design Principles
 
-1. **Security**: Prevents HTML or other potentially unsafe content from being pasted
-2. **Simplicity**: Minimal implementation focused on extracting plain text
-3. **Compatibility**: Works with standard ClipboardEvent API
-4. **Safety**: Defaults to empty string when no text is available, preventing null-related issues
+1. **Security**: Aggressively removes scriptable/unsafe content and attributes
+2. **Fidelity**: Preserves safe structure and converts plain text to line‑broken HTML
+3. **Simplicity**: DOM‑based traversal without external dependencies

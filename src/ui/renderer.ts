@@ -55,12 +55,12 @@ class Renderer {
       controller: new window.MessageListController(),
     });
 
-    // Note: Composer is now handled by the React component, so we don't register it here
+    // Note: Composer is handled by a dedicated bootstrap (composer-bootstrap.js), so we don't register it here
   }
 
   mountAll(doc: Document = document) {
     this.registry.ensureMounted('messageList', doc);
-    // Note: Composer is now handled by the React component, so we don't mount it here
+    // Note: Composer is handled by a dedicated bootstrap (composer-bootstrap.js), so we don't mount it here
   }
 
   handle(e: RendererEvent) {

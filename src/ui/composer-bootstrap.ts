@@ -1,7 +1,7 @@
 // src/ui/composer-bootstrap.ts
-// Bootstrap for the React composer module
+// Bootstrap for the composer module
 
-import { initComposer } from "../modules/composer/index.js";
+import { initComposer } from "@/modules/composer/index.js";
 
 // Use the global bridge injected by dist/ui/bridge.js to talk to extension
 
@@ -30,10 +30,12 @@ function start() {
 
     const send = (html: string, attachments?: any[]) => {
       const t = (html ?? "").replace(/<[^>]*>/g, "").trim();
-      if (!t && !(attachments && attachments.length)) return;
+      const embeddedFiles: string[] = (composer as any).getEmbeddedFiles?.() ?? [];
+      if (!t && !(attachments && attachments.length) && embeddedFiles.length === 0) return;
       post("chat.userMessage", {
         text: html,
         attachments: attachments ?? composer.getAttachments?.(),
+        embeddedFiles,
       });
       composer.setValue("");
       composer.clearAttachments?.();

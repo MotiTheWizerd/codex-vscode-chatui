@@ -1,0 +1,17 @@
+/* Basic neutral styling for @file mentions (Stage 1) */
+.mentions-popup { position: absolute; bottom: 100%; left: 0; width: 520px; max-height: 280px; overflow: auto; border: 1px solid var(--vscode-editorWidget-border, #444); background: var(--vscode-editorWidget-background, #1e1e1e); box-shadow: 0 4px 16px rgba(0,0,0,.3); border-radius: 8px; padding: 6px; z-index: 50; }
+.mentions-popup.hidden { display: none; }
+.mentions-row { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 6px; cursor: pointer; transition: background .12s ease, outline-color .12s ease; }
+.mentions-row:hover, .mentions-row.is-active { background: var(--vscode-list-activeSelectionBackground, rgba(128,128,128,.18)); }
+.mentions-row.is-active { outline: 1px solid var(--vscode-focusBorder, rgba(128,128,128,.45)); }
+.mentions-icon { opacity: .9; font-size: 12px; line-height: 1; }
+.mentions-path { font-family: var(--vscode-editor-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace); font-size: 12px; }
+
+.mention-chip { display: inline-flex; align-items: center; gap: 6px; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--vscode-button-border, #555); background: var(--vscode-button-secondaryBackground, #2a2a2a); margin: 0 2px; }
+.mention-chip-icon { font-size: 12px; line-height: 1; }
+.mention-chip-text { font-size: 12px; }
+.mention-chip-close { all: unset; cursor: pointer; padding: 0 4px; font-weight: 700; }
+
+/* Drop target subtle highlight */
+.drop-target { outline: 2px dashed rgba(200,200,200,.3); outline-offset: 4px; }
+.mentions-footer { margin-top: 4px; font-size: 11px; color: rgba(200,200,200,.6); padding: 2px 4px; }

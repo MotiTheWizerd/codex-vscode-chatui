@@ -1,5 +1,5 @@
 // policy.ts — minimal policy guard
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 
 export class PolicyGuard {
   private requests = new Map<string, number[]>();

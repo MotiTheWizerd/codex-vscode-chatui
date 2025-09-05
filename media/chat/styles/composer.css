@@ -1,6 +1,6 @@
 /* Composer styles moved to static assets for webview loading */
 .composer-root { flex: 1; min-width: 0; }
-.composer { display: grid; gap: 8px; width: 100%; }
+.composer { display: grid; gap: 8px; width: 100%; position: relative; }
 .composer-preview { display: flex; flex-wrap: wrap; gap: 8px; }
 .composer-preview-img { max-width: 120px; max-height: 120px; border: 1px solid var(--vscode-input-border, #555); border-radius: 4px; object-fit: cover; }
 .composer-editor {

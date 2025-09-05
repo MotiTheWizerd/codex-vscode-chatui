@@ -1,7 +1,7 @@
 // Tool bus for plugin API
 // This file manages tool registration and execution
 
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 import type { Tool } from "@/types/tools";
 import { serializeErr } from "@/telemetry/err";
 

@@ -4,10 +4,11 @@ import { EventBus } from "@/core/event-bus";
 import { ConfigService } from "@/core/config";
 import { PolicyGuard } from "@/core/policy";
 import { DIContainer } from "@/core/di";
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 import { SettingsManager } from "@/config/settings";
 import { SessionStore } from "@/state/session-store";
 import { ToolBus } from "@/tools/tool-bus";
+import { FilesService } from "@/files/service";
 import { CodexClient } from "@/transport/client";
 import type { ChatSession } from "@/types/chat";
 import { Events } from "@core/events";
@@ -30,6 +31,7 @@ export class CoreManager implements vscode.Disposable {
   private sessionStore: SessionStore | null = null;
   private toolBus: ToolBus | null = null;
   private client: CodexClient | null = null;
+  private files: FilesService | null = null;
 
   private disposables: vscode.Disposable[] = [];
   private initialized = false;
@@ -62,6 +64,7 @@ export class CoreManager implements vscode.Disposable {
       this.toolBus.setLogger(this.logger);
     }
     this.client = new CodexClient(this.configService, this.logger ?? null);
+    this.files = new FilesService(this.logger ?? null);
 
     // Initialize policy guard after logger/config are ready
     try {
@@ -82,6 +85,7 @@ export class CoreManager implements vscode.Disposable {
     if (this.sessionStore) this.di.register("sessionStore", this.sessionStore);
     if (this.toolBus) this.di.register("toolBus", this.toolBus);
     if (this.client) this.di.register("codexClient", this.client);
+    if (this.files) this.di.register("filesService", this.files);
 
     // Track a trivial disposable to mark lifecycle hookup (optional)
     this.trackDisposable(
@@ -96,6 +100,9 @@ export class CoreManager implements vscode.Disposable {
       features: this.configService.getFeatures(),
     });
     this.eventBus.publish(Events.CoreReady);
+
+    // Start files indexing (non-blocking)
+    try { await this.files?.initialize(); } catch (e) { this.logWarn("FilesService init failed", { error: e instanceof Error ? e.message : String(e) }); }
 
     // If session history exists, emit a restoration event for UI/state listeners
     try {
@@ -135,6 +142,9 @@ export class CoreManager implements vscode.Disposable {
   }
   get codex(): CodexClient | null {
     return this.client;
+  }
+  get filesService(): FilesService | null {
+    return this.files;
   }
 
   // Convenience helpers — Session access

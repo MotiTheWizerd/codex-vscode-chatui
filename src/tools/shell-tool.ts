@@ -2,7 +2,7 @@
 // This file implements a stub for shell command execution
 
 import type { Tool, ShellIn, ShellOut } from "@/types/tools";
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 
 export class ShellTool implements Tool<ShellIn, ShellOut> {
   name = "shell";

@@ -2,7 +2,7 @@
 // This file handles configuration settings for the extension
 
 import * as vscode from 'vscode';
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 
 export class SettingsManager {
   private static logger: Logger | null = null;

@@ -4,7 +4,10 @@
   padding: 16px;
   flex-shrink: 0;
 }
-
+.input-container {
+  background: #252526 !important;
+  color: red !important;
+}
 .context-bar {
   background: #252526;
   border-radius: 8px;
@@ -55,17 +58,20 @@
   display: flex;
   align-items: flex-end;
   background: #1e1e1e;
-  border: 1px solid #404040;
-  border-radius: 8px;
-  padding: 12px;
+  border: 0.2px solid #404040;
+  border-radius: 6px;
+  padding: 2px;
   transition: border-color 0.2s ease;
 }
 
 .input-wrapper:focus-within {
   border-color: #ffd700;
-  box-shadow: 0 0 0 1px #ffd700;
 }
-.input-wrapper .userMessage {
+.input-wrapper .composer-editor {
+  border: none !important;
+  outline: none;
+}
+.input-wrapper #composer-root {
   flex: 1;
   padding: 10px;
   background: transparent;
@@ -79,7 +85,7 @@
   max-height: 120px;
   line-height: 1.4;
 }
-.input-wrapper #composer-root {
+#composer-root {
   outline: none !important;
 }
 .userMessage::placeholder {

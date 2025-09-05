@@ -69,7 +69,7 @@ export function normalizePasteToHtml(ev: ClipboardEvent): string | null {
   return escaped.replace(/\r?\n/g, '<br>');
 }
 
-// Back-compat for unused React composer build
+// Back-compat for legacy paths
 export function normalizePaste(ev: ClipboardEvent): string | null {
   const dt = ev.clipboardData;
   if (!dt) return null;

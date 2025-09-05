@@ -3,7 +3,7 @@
 
 import { ExtensionError } from '@core/errors';
 import { MetricsCollector } from './metrics';
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 
 export class ErrorReporter {
   private metricsCollector: MetricsCollector;

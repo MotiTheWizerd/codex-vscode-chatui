@@ -1,5 +1,5 @@
 // event-bus.ts
-import { Logger } from "@/telemetry/logger.js";
+import type { Logger } from "@/telemetry/logger.js";
 
 type EventHandler = (...args: unknown[]) => void;
 
