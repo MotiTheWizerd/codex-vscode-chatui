@@ -1,5 +1,6 @@
 // Controllers (TypeScript port)
 // Mirrors media/chat/js/03_controllers.js and attaches to window.
+import { sanitizeHtml } from "@/modules/composer/sanitize.js";
 
 class MessageListController {
   private root: HTMLElement | null = null;
@@ -19,21 +20,17 @@ class MessageListController {
 
   private render() {
     if (!this.root) return;
-    const escape = (s: unknown) => String(s)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/\"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-    const html = this.items.map(m => `
+    const html = this.items.map(m => {
+      const safe = sanitizeHtml(String(m.text ?? ""));
+      return `
       <div class="message">
         <div class="message-header">
           <div class="message-avatar ${m.role === 'user' ? 'user-avatar' : 'assistant-avatar'}">${m.role === 'user' ? 'U' : 'AI'}</div>
           <div class="message-time">now</div>
         </div>
-        <div class="message-content">${escape(m.text)}</div>
+        <div class="message-content">${safe}</div>
       </div>
-    `).join('\n');
+    `;}).join('\n');
     this.root.innerHTML = html;
     this.root.scrollTop = this.root.scrollHeight;
   }

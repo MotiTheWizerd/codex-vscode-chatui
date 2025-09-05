@@ -72,10 +72,13 @@ export class ChatWebview implements vscode.Disposable {
         // User sent a message from UI → persist; transport may start separately
         if (type === "chat.userMessage") {
           const text: string | undefined = msg?.payload?.text ?? msg?.text;
-          if (!text || !text.trim()) return;
+          const attachments: unknown[] | undefined = msg?.payload?.attachments ?? msg?.attachments;
+          const hasText = !!(text && text.trim());
+          const hasAttachments = Array.isArray(attachments) && attachments.length > 0;
+          if (!hasText && !hasAttachments) return;
           // Forward to EventBus; CoreManager handles policies, persistence, and transport
           const streaming = this.core.config.getFeatures().streaming;
-          this.core.eventBusInstance.publish(Events.UiSend, { text, streaming });
+          this.core.eventBusInstance.publish(Events.UiSend, { text: text ?? "", streaming, options: hasAttachments ? { attachments } : undefined });
           return;
         }
       } catch (e) {
@@ -255,6 +258,7 @@ export class ChatWebview implements vscode.Disposable {
       const distControllers = vscode.Uri.joinPath(distUiDir, "controllers.js");
       const distRenderer = vscode.Uri.joinPath(distUiDir, "renderer.js");
       const distBootstrap = vscode.Uri.joinPath(distUiDir, "bootstrap.js");
+      const distComposerBootstrap = vscode.Uri.joinPath(distUiDir, "composer-bootstrap.js");
       const distScripts: vscode.Uri[] = [];
       try {
         await vscode.workspace.fs.stat(distBridge);
@@ -276,6 +280,13 @@ export class ChatWebview implements vscode.Disposable {
         await vscode.workspace.fs.stat(distBootstrap);
         distScripts.push(distBootstrap);
       } catch {}
+      try {
+        await vscode.workspace.fs.stat(distComposerBootstrap);
+        distScripts.push(distComposerBootstrap);
+      } catch {}
+
+      // Composer is initialized via composer-bootstrap.js which imports its own module graph.
+      // No need to inject individual module files here.
 
       const distScriptTags = (await Promise.all(distScripts.map(toUriWithV)))
         .map((src) => `<script type="module" nonce="${nonce}" src="${src}"></script>`)

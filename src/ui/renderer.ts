@@ -55,18 +55,12 @@ class Renderer {
       controller: new window.MessageListController(),
     });
 
-    this.registry.register({
-      key: 'composer',
-      selector: '[data-el="composer"]',
-      controller: new window.ComposerController({
-        onSend: (text: string) => this.handle({ type: 'user.send', text }),
-      }),
-    });
+    // Note: Composer is now handled by the React component, so we don't register it here
   }
 
   mountAll(doc: Document = document) {
     this.registry.ensureMounted('messageList', doc);
-    this.registry.ensureMounted('composer', doc);
+    // Note: Composer is now handled by the React component, so we don't mount it here
   }
 
   handle(e: RendererEvent) {

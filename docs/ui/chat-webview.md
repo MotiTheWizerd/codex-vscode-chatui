@@ -15,9 +15,10 @@ Implemented and used as the sole UI for chat.
 - `media/chat/index.html` — HTML template with placeholders for assets and fragments.
 - `media/chat/styles/*.css` — Stylesheets included in alphabetical order.
 - `media/chat/js/*.js` — Scripts included in alphabetical order with CSP nonce (excluding bridge/renderer, now compiled from TS).
-- `dist/ui/bridge.js`, `dist/ui/renderer.js` — Compiled TS scripts injected first to expose `window.CodexBridge` and `window.Renderer`.
- - `dist/ui/elements-registry.js`, `dist/ui/controllers.js` — Compiled TS scripts for registry and controllers.
- - `dist/ui/bootstrap.js` — Compiled TS bootstrap injected last among dist scripts (no globals), orchestrates startup.
+- `dist/ui/bridge.js`, `dist/ui/renderer.js` — Compiled TS scripts injected first to expose `window.CodexBridge` and `window/Renderer`.
+- `dist/ui/elements-registry.js`, `dist/ui/controllers.js` — Compiled TS scripts for registry and controllers.
+- `dist/ui/bootstrap.js` — Compiled TS bootstrap orchestrates startup and handshake.
+- `dist/ui/composer-bootstrap.js` — Mounts the React Composer into `#composer-root` and bridges `chat.userMessage`.
 - `media/chat/html/{head,header,messages,footer}/**/*.html` — Safe fragments injected into the template.
 
 ## Behavior
@@ -27,7 +28,12 @@ Implemented and used as the sole UI for chat.
 - Watches `media/chat/**/*.{css,js}` and `media/chat/html/**/*.html` during development to refresh the panel.
 - Uses a factory pattern for instantiation with proper disposal handling.
 - UI bootstrap: `dist/ui/bootstrap.js` waits for globals, constructs a `Renderer`, calls `mountAll(document)`, posts `ui.ready`, and forwards extension messages to `renderer.handle()`.
- - Send/Stream: UI sends `chat.userMessage` → ChatWebview publishes `Events.UiSend` → CoreManager routes to transport; tokens and completion are forwarded back to the webview as `assistant.token` and `assistant.commit`.
+ - Send/Stream: Composer posts `chat.userMessage` → ChatWebview publishes `Events.UiSend` → CoreManager routes to transport; tokens and completion are forwarded back to the webview as `assistant.token` and `assistant.commit`.
+
+## Composer Assets
+
+- CSS is served from `media/chat/styles/composer.css` and loaded with other styles.
+- The composer module graph is loaded via `dist/ui/composer-bootstrap.js`; individual module files are not injected as separate `<script>` tags.
 
 ## Key Features
 

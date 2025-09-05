@@ -63,3 +63,5 @@ function start() {
 // Wait for bridge + renderer globals set by TS modules
 whenReady(() => !!((window as any).CodexBridge && (window as any).Renderer), start);
 
+// Composer is loaded via a dedicated module script tag (composer-bootstrap.js).
+// Keeping bootstrap focused on Renderer and bridge orchestration only.

@@ -1,0 +1,7 @@
+/* src/modules/composer/style.css */
+.composer { display: grid; gap: 8px; }
+.toolbar { display: flex; gap: 6px; align-items: center; }
+.toolbar button { padding: 4px 8px; border: 1px solid var(--vscode-editorWidget-border, #444); background: var(--vscode-editorWidget-background, #222); cursor: pointer; }
+.composer-textarea { width: 100%; min-height: 96px; resize: vertical; padding: 8px; border: 1px solid var(--vscode-input-border, #555); background: var(--vscode-input-background, #1e1e1e); color: var(--vscode-input-foreground, #ddd); }
+.slash-menu { border: 1px solid var(--vscode-editorWidget-border, #444); background: var(--vscode-editorWidget-background, #222); max-height: 160px; overflow: auto; padding: 6px; }
+.slash-menu .active { outline: 1px solid var(--vscode-focusBorder, #888); }
