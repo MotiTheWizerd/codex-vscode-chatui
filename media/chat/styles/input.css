@@ -65,13 +65,13 @@
   border-color: #ffd700;
   box-shadow: 0 0 0 1px #ffd700;
 }
-
-.input-field {
+.input-wrapper .userMessage {
   flex: 1;
   padding: 10px;
   background: transparent;
   border: none;
   color: #cccccc;
+  outline: none !important;
   font-size: 14px;
   font-family: inherit;
   resize: none;
@@ -79,10 +79,10 @@
   max-height: 120px;
   line-height: 1.4;
 }
-.input-wrapper #messageInput {
-  outline: none;
+.input-wrapper #composer-root {
+  outline: none !important;
 }
-.input-field::placeholder {
+.userMessage::placeholder {
   color: #6c6c6c;
 }
 
