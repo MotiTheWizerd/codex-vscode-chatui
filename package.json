@@ -43,7 +43,8 @@
     "test": "jest",
     "backup": "node src/scripts/package-project.js",
     "lint": "eslint 'src/**/*.{ts,js}'",
-    "analyze": "node dist/modules/QwenCoreAnalysis/cli.js"
+    "analyze": "node dist/modules/QwenCoreAnalysis/cli.js",
+    "generate-docs": "node scripts/generate-codebase-json.cjs"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,246 @@
+{
+  "files": [
+    {
+      "path": "src/core/manager.ts",
+      "size": 12891,
+      "language": "typescript",
+      "key_sections": [
+        {
+          "type": "class_definition",
+          "name": "CoreManager",
+          "startLine": 23,
+          "endLine": 245,
+          "content": "export class CoreManager implements vscode.Disposable {\n  private readonly eventBus = new EventBus();\n  private readonly configService = new ConfigService();\n  private readonly policyGuard = new PolicyGuard();\n  private readonly di = new DIContainer();\n  private sessionStore: SessionStore | null = null;\n  private toolBus: ToolBus | null = null;\n  private client: CodexClient | null = null;\n  private files: FilesService | null = null;\n\n  private disposables: vscode.Disposable[] = [];\n  private initialized = false;\n  private disposed = false;\n  // Event handlers we register so we can unsubscribe on shutdown\n  private onUiSendWrapped: ((...args: unknown[]) => void) | null = null;\n  private onToolInvokeWrapped: ((...args: unknown[]) => void) | null = null;\n\n  constructor(\n    private readonly context: vscode.ExtensionContext,\n    public readonly logger: Logger | null = null\n  ) {}\n\n  async initialize(): Promise<void> {\n    // Implementation...\n  }\n\n  // Getters for services\n  get diContainer(): DIContainer {\n    return this.di;\n  }\n  // ... more getters\n\n  async shutdown(): Promise<void> {\n    // Implementation...\n  }\n\n  dispose(): void {\n    // Implementation...\n  }\n\n  private registerEventHandlers() {\n    // Implementation...\n  }\n  // ... other private methods\n}",
+          "issues": [
+            {
+              "type": "complexity",
+              "severity": "medium",
+              "description": "High number of dependencies and responsibilities",
+              "line": 23
+            }
+          ],
+          "metrics": {
+            "cyclomatic_complexity": 10,
+            "lines_of_code": 222,
+            "dependencies_count": 12
+          }
+        }
+      ],
+      "imports": [
+        {
+          "module": "vscode",
+          "line": 2,
+          "used_exports": [
+            "* as vscode"
+          ]
+        },
+        {
+          "module": "@/core/event-bus",
+          "line": 3,
+          "used_exports": [
+            "EventBus"
+          ]
+        },
+        {
+          "module": "@/core/config",
+          "line": 4,
+          "used_exports": [
+            "ConfigService"
+          ]
+        },
+        {
+          "module": "@/core/policy",
+          "line": 5,
+          "used_exports": [
+            "PolicyGuard"
+          ]
+        },
+        {
+          "module": "@/core/di",
+          "line": 6,
+          "used_exports": [
+            "DIContainer"
+          ]
+        },
+        {
+          "module": "@/telemetry/logger.js",
+          "line": 7,
+          "used_exports": [
+            "Logger"
+          ]
+        },
+        {
+          "module": "@/config/settings",
+          "line": 8,
+          "used_exports": [
+            "SettingsManager"
+          ]
+        },
+        {
+          "module": "@/state/session-store",
+          "line": 9,
+          "used_exports": [
+            "SessionStore"
+          ]
+        },
+        {
+          "module": "@/tools/tool-bus",
+          "line": 10,
+          "used_exports": [
+            "ToolBus"
+          ]
+        },
+        {
+          "module": "@/files/service",
+          "line": 11,
+          "used_exports": [
+            "FilesService"
+          ]
+        },
+        {
+          "module": "@/transport/client",
+          "line": 12,
+          "used_exports": [
+            "CodexClient"
+          ]
+        },
+        {
+          "module": "@/types/chat",
+          "line": 13,
+          "used_exports": [
+            "ChatSession"
+          ]
+        },
+        {
+          "module": "@core/events",
+          "line": 14,
+          "used_exports": [
+            "Events"
+          ]
+        },
+        {
+          "module": "@core/events",
+          "line": 15,
+          "used_exports": [
+            "UiSendPayload",
+            "TransportStartedPayload",
+            "TransportTokenPayload",
+            "TransportCompletePayload",
+            "TransportErrorPayload",
+            "ToolInvokePayload",
+            "ToolResultPayload",
+            "ToolErrorPayload"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CoreManager",
+          "type": "class",
+          "line": 23,
+          "default": false
+        }
+      ]
+    },
+    {
+      "path": "src/ui/chat-webview.ts",
+      "size": 20500,
+      "language": "typescript",
+      "key_sections": [
+        {
+          "type": "class_definition",
+          "name": "ChatWebview",
+          "startLine": 7,
+          "endLine": 220,
+          "content": "export class ChatWebview implements vscode.Disposable {\n  private disposables: vscode.Disposable[] = [];\n  private disposed = false;\n  private logger: Logger | null = null;\n\n  private constructor(\n    private readonly context: vscode.ExtensionContext,\n    private readonly core: CoreManager,\n    private readonly onDispose?: () => void\n  ) {\n    // Implementation...\n  }\n\n  private panel: vscode.WebviewPanel;\n\n  static create(\n    context: vscode.ExtensionContext,\n    core: CoreManager,\n    logger: Logger | null = null,\n    onDispose?: () => void\n  ): ChatWebview {\n    // Implementation...\n  }\n\n  reveal(column: vscode.ViewColumn = vscode.ViewColumn.Beside) {\n    // Implementation...\n  }\n\n  dispose() {\n    // Implementation...\n  }\n\n  get webviewPanel(): vscode.WebviewPanel {\n    // Implementation...\n  }\n\n  private async setHtml(context: vscode.ExtensionContext) {\n    // Implementation...\n  }\n}",
+          "issues": [
+            {
+              "type": "complexity",
+              "severity": "high",
+              "description": "Complex message handling and event coordination",
+              "line": 7
+            }
+          ],
+          "metrics": {
+            "cyclomatic_complexity": 15,
+            "lines_of_code": 213,
+            "dependencies_count": 5
+          }
+        }
+      ],
+      "imports": [
+        {
+          "module": "vscode",
+          "line": 2,
+          "used_exports": [
+            "Disposable",
+            "window",
+            "ViewColumn",
+            "Uri"
+          ]
+        },
+        {
+          "module": "@/core/manager",
+          "line": 3,
+          "used_exports": [
+            "CoreManager"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ChatWebview",
+          "type": "class",
+          "line": 7,
+          "default": false
+        }
+      ]
+    },
+    {
+      "path": "src/types/chat.ts",
+      "size": 684,
+      "language": "typescript",
+      "key_sections": [
+        {
+          "type": "interface_definitions",
+          "name": "ChatMessage and ChatSession",
+          "startLine": 1,
+          "endLine": 25,
+          "content": "export interface ChatMessage {\n  id: string;\n  role: 'user' | 'assistant' | 'system';\n  content: string;\n  timestamp: Date;\n}\n\nexport interface ChatSession {\n  id: string;\n  messages: ChatMessage[];\n  createdAt: Date;\n  updatedAt: Date;\n}\n\n// Persisted shapes used in workspaceState\nexport interface PersistedChatMessage {\n  id: string;\n  role: 'user' | 'assistant' | 'system';\n  content: string;\n  timestamp: string; // ISO\n}\n\nexport interface PersistedChatSession {\n  id: string;\n  messages: PersistedChatMessage[];\n  createdAt: string;\n  updatedAt: string;\n}\n\nexport interface PersistedState {\n  sessions: Record<string, PersistedChatSession>;\n  currentSessionId: string | null;\n}"
+        }
+      ]
+    }
+  ],
+  "snippets": [
+    {
+      "category": "event_handling",
+      "examples": [
+        {
+          "file": "src/core/event-bus.ts",
+          "pattern": "type-safe event subscription and publishing",
+          "code": "subscribe(event: string, handler: EventHandler): void {\n  if (!this.handlers.has(event)) {\n    this.handlers.set(event, new Set());\n  }\n  this.handlers.get(event)!.add(handler);\n}\n\npublish(event: string, ...args: unknown[]): void {\n  const list = this.handlers.get(event);\n  if (!list) return;\n  for (const handler of list) {\n    try {\n      handler(...args);\n    } catch (err) {\n      this.logger?.error(`Error in event handler for \"${event}\"`, { error: err });\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "category": "error_handling",
+      "examples": [
+        {
+          "file": "src/core/manager.ts",
+          "pattern": "try-catch with error logging",
+          "code": "try {\n  await this.riskyOperation();\n} catch (error) {\n  const m = error instanceof Error ? error.message : String(error);\n  this.logger?.error?.(\"Operation failed\", { error: m });\n}"
+        }
+      ]
+    },
+    {
+      "category": "webview_communication",
+      "examples": [
+        {
+          "file": "src/ui/chat-webview.ts",
+          "pattern": "webview message handling",
+          "code": "const recv = this.panel.webview.onDidReceiveMessage(async (msg) => {\n  try {\n    if (!msg || typeof msg !== \"object\") return;\n    const type = msg.type as string | undefined;\n    \n    if (type === \"ui.ready\") {\n      // Handle UI ready event\n    }\n    \n    if (type === \"chat.userMessage\") {\n      // Handle user message\n    }\n  } catch (e) {\n    const m = e instanceof Error ? e.message : String(e);\n    this.logger?.error?.(\"webview message handling error\", { error: m });\n  }\n});"
+        }
+      ]
+    }
+  ]
+}

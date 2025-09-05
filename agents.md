@@ -8,6 +8,35 @@
 4. Identify affected components before making changes
 ```
 
+### 2. 🔍 **Use the Codebase Index for Quick Reference**
+
+The `codebase_index/` folder contains pre-generated JSON files that provide comprehensive information about the project structure and content. Use these files to quickly understand the codebase before diving into specific files.
+
+**Available Index Files:**
+- `codebase-structure.json` - Complete architectural overview with layers, responsibilities, and file mappings
+- `codebase-content.json` - Detailed content analysis of all source files
+- `codebase-symbols.json` - Symbol definitions, exports, and dependencies
+
+**When to Use:**
+- Before starting any task to understand the overall architecture
+- When you need to find specific modules or understand dependencies
+- To get a quick overview of file responsibilities and relationships
+- When the docs/ directory doesn't have complete information
+
+**How to Use:**
+1. Start with `codebase-structure.json` for architectural overview
+2. Use `codebase-content.json` to understand specific file contents
+3. Reference `codebase-symbols.json` for import/export relationships
+
+**Example Usage:**
+```bash
+# Quick architectural understanding
+cat codebase_index/codebase-structure.json | jq '.architecture.layers'
+
+# Find files by responsibility
+cat codebase_index/codebase-structure.json | jq '.architecture.layers[] | select(.name == "core")'
+```
+
 # Before any task, perform these steps:
 
 1. Review the docs/ directory thoroughly

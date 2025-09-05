@@ -115,5 +115,10 @@ typings/
 # Windows
 Thumbs.db
 
-# Project backups
+# Project
 project-backup/
+codebase_index/
+
+
+
+
