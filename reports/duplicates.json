@@ -1,0 +1,10 @@
+{
+  "exact": [],
+  "near": [
+    {
+      "pattern": "mount/dispose controller pattern",
+      "candidates": ["src/ui/controllers.ts", "src/ui/bridge.ts", "src/ui/chat-webview.ts"],
+      "note": "extract BaseController"
+    }
+  ]
+}

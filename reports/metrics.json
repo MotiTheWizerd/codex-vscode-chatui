@@ -1,0 +1,1909 @@
+{
+  "files": [
+    {
+      "path": "src/ui/bootstrap.ts",
+      "stats": {
+        "total": 67,
+        "source": 51,
+        "comment": 7,
+        "single": 7,
+        "block": 0,
+        "mixed": 0,
+        "empty": 9,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ui/bridge.ts",
+      "stats": {
+        "total": 78,
+        "source": 60,
+        "comment": 8,
+        "single": 8,
+        "block": 0,
+        "mixed": 0,
+        "empty": 10,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ui/chat-panel-manager.ts",
+      "stats": {
+        "total": 18,
+        "source": 15,
+        "comment": 1,
+        "single": 1,
+        "block": 0,
+        "mixed": 0,
+        "empty": 2,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ui/chat-webview.ts",
+      "stats": {
+        "total": 429,
+        "source": 368,
+        "comment": 29,
+        "single": 23,
+        "block": 6,
+        "mixed": 4,
+        "empty": 36,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ui/composer-bootstrap.ts",
+      "stats": {
+        "total": 76,
+        "source": 56,
+        "comment": 10,
+        "single": 10,
+        "block": 0,
+        "mixed": 1,
+        "empty": 11,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ui/controllers.ts",
+      "stats": {
+        "total": 121,
+        "source": 101,
+        "comment": 5,
+        "single": 5,
+        "block": 0,
+        "mixed": 2,
+        "empty": 17,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ui/elements-registry.ts",
+      "stats": {
+        "total": 72,
+        "source": 60,
+        "comment": 4,
+        "single": 4,
+        "block": 0,
+        "mixed": 1,
+        "empty": 9,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ui/renderer.ts",
+      "stats": {
+        "total": 101,
+        "source": 76,
+        "comment": 8,
+        "single": 8,
+        "block": 0,
+        "mixed": 0,
+        "empty": 17,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ui/statusbar/logs-button.ts",
+      "stats": {
+        "total": 10,
+        "source": 9,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 1,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/types/chat.ts",
+      "stats": {
+        "total": 33,
+        "source": 28,
+        "comment": 2,
+        "single": 2,
+        "block": 0,
+        "mixed": 1,
+        "empty": 4,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/types/ipc.ts",
+      "stats": {
+        "total": 10,
+        "source": 6,
+        "comment": 1,
+        "single": 1,
+        "block": 0,
+        "mixed": 0,
+        "empty": 3,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/types/result.ts",
+      "stats": {
+        "total": 7,
+        "source": 5,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 2,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/types/tools.ts",
+      "stats": {
+        "total": 10,
+        "source": 8,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 2,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/transport/client.ts",
+      "stats": {
+        "total": 130,
+        "source": 108,
+        "comment": 6,
+        "single": 6,
+        "block": 0,
+        "mixed": 0,
+        "empty": 16,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/transport/http.ts",
+      "stats": {
+        "total": 53,
+        "source": 47,
+        "comment": 1,
+        "single": 1,
+        "block": 0,
+        "mixed": 0,
+        "empty": 5,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/transport/types.ts",
+      "stats": {
+        "total": 38,
+        "source": 31,
+        "comment": 2,
+        "single": 2,
+        "block": 0,
+        "mixed": 0,
+        "empty": 5,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/transport/ws-handler.ts",
+      "stats": {
+        "total": 134,
+        "source": 110,
+        "comment": 10,
+        "single": 10,
+        "block": 0,
+        "mixed": 2,
+        "empty": 16,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/tools/shell-tool.ts",
+      "stats": {
+        "total": 29,
+        "source": 19,
+        "comment": 5,
+        "single": 5,
+        "block": 0,
+        "mixed": 0,
+        "empty": 5,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/tools/tool-bus.ts",
+      "stats": {
+        "total": 44,
+        "source": 30,
+        "comment": 6,
+        "single": 6,
+        "block": 0,
+        "mixed": 0,
+        "empty": 8,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/telemetry/err.ts",
+      "stats": {
+        "total": 12,
+        "source": 10,
+        "comment": 1,
+        "single": 1,
+        "block": 0,
+        "mixed": 0,
+        "empty": 1,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/telemetry/errors.ts",
+      "stats": {
+        "total": 24,
+        "source": 20,
+        "comment": 1,
+        "single": 1,
+        "block": 0,
+        "mixed": 0,
+        "empty": 3,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/telemetry/log.ts",
+      "stats": {
+        "total": 6,
+        "source": 2,
+        "comment": 2,
+        "single": 2,
+        "block": 0,
+        "mixed": 0,
+        "empty": 2,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/telemetry/logger.ts",
+      "stats": {
+        "total": 65,
+        "source": 40,
+        "comment": 12,
+        "single": 12,
+        "block": 0,
+        "mixed": 0,
+        "empty": 13,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/telemetry/metrics.ts",
+      "stats": {
+        "total": 68,
+        "source": 47,
+        "comment": 9,
+        "single": 9,
+        "block": 0,
+        "mixed": 0,
+        "empty": 12,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/telemetry/reporter.ts",
+      "stats": {
+        "total": 53,
+        "source": 31,
+        "comment": 11,
+        "single": 11,
+        "block": 0,
+        "mixed": 0,
+        "empty": 11,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/state/migrations.ts",
+      "stats": {
+        "total": 115,
+        "source": 87,
+        "comment": 15,
+        "single": 15,
+        "block": 0,
+        "mixed": 0,
+        "empty": 13,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/state/session-store.ts",
+      "stats": {
+        "total": 145,
+        "source": 113,
+        "comment": 12,
+        "single": 12,
+        "block": 0,
+        "mixed": 0,
+        "empty": 20,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/scripts/consolidate-docs.js",
+      "stats": {
+        "total": 76,
+        "source": 52,
+        "comment": 11,
+        "single": 11,
+        "block": 0,
+        "mixed": 0,
+        "empty": 13,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/scripts/package-project.js",
+      "stats": {
+        "total": 115,
+        "source": 70,
+        "comment": 23,
+        "single": 23,
+        "block": 0,
+        "mixed": 2,
+        "empty": 24,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/bridge.ts",
+      "stats": {
+        "total": 32,
+        "source": 20,
+        "comment": 5,
+        "single": 5,
+        "block": 0,
+        "mixed": 0,
+        "empty": 7,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/composer-dom.ts",
+      "stats": {
+        "total": 176,
+        "source": 154,
+        "comment": 4,
+        "single": 4,
+        "block": 0,
+        "mixed": 0,
+        "empty": 18,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/composer.tsx",
+      "stats": {
+        "total": 145,
+        "source": 129,
+        "comment": 4,
+        "single": 4,
+        "block": 0,
+        "mixed": 1,
+        "empty": 13,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/css.d.ts",
+      "stats": {
+        "total": 4,
+        "source": 4,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 0,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/index.ts",
+      "stats": {
+        "total": 11,
+        "source": 6,
+        "comment": 2,
+        "single": 2,
+        "block": 0,
+        "mixed": 0,
+        "empty": 3,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/markdown.ts",
+      "stats": {
+        "total": 27,
+        "source": 18,
+        "comment": 3,
+        "single": 3,
+        "block": 0,
+        "mixed": 0,
+        "empty": 6,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/sanitize.ts",
+      "stats": {
+        "total": 78,
+        "source": 67,
+        "comment": 5,
+        "single": 5,
+        "block": 0,
+        "mixed": 1,
+        "empty": 7,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/slash.ts",
+      "stats": {
+        "total": 10,
+        "source": 6,
+        "comment": 3,
+        "single": 3,
+        "block": 0,
+        "mixed": 1,
+        "empty": 2,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/style.css",
+      "stats": {
+        "total": 7,
+        "source": 6,
+        "comment": 1,
+        "single": 0,
+        "block": 1,
+        "mixed": 0,
+        "empty": 0,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/composer/types.ts",
+      "stats": {
+        "total": 37,
+        "source": 31,
+        "comment": 4,
+        "single": 4,
+        "block": 0,
+        "mixed": 3,
+        "empty": 5,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/BaseAnalyzer.ts",
+      "stats": {
+        "total": 144,
+        "source": 102,
+        "comment": 24,
+        "single": 5,
+        "block": 19,
+        "mixed": 0,
+        "empty": 18,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/CodeSmellAnalyzer.ts",
+      "stats": {
+        "total": 48,
+        "source": 40,
+        "comment": 1,
+        "single": 1,
+        "block": 0,
+        "mixed": 0,
+        "empty": 7,
+        "todo": 5,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/ConfigLoader.ts",
+      "stats": {
+        "total": 48,
+        "source": 39,
+        "comment": 4,
+        "single": 4,
+        "block": 0,
+        "mixed": 0,
+        "empty": 5,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/CoreAnalyzer.ts",
+      "stats": {
+        "total": 44,
+        "source": 39,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 5,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/FunctionSizeAnalyzer.ts",
+      "stats": {
+        "total": 97,
+        "source": 75,
+        "comment": 5,
+        "single": 5,
+        "block": 0,
+        "mixed": 0,
+        "empty": 17,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/LineCountAnalyzer.ts",
+      "stats": {
+        "total": 35,
+        "source": 29,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 6,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/NestingAnalyzer.ts",
+      "stats": {
+        "total": 71,
+        "source": 57,
+        "comment": 4,
+        "single": 4,
+        "block": 0,
+        "mixed": 1,
+        "empty": 11,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/ReportGenerator.ts",
+      "stats": {
+        "total": 93,
+        "source": 69,
+        "comment": 8,
+        "single": 8,
+        "block": 0,
+        "mixed": 0,
+        "empty": 16,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/cli.ts",
+      "stats": {
+        "total": 59,
+        "source": 40,
+        "comment": 7,
+        "single": 6,
+        "block": 1,
+        "mixed": 1,
+        "empty": 13,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/modules/QwenCoreAnalysis/index.ts",
+      "stats": {
+        "total": 5,
+        "source": 4,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 1,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ext/extension.ts",
+      "stats": {
+        "total": 12,
+        "source": 7,
+        "comment": 3,
+        "single": 3,
+        "block": 0,
+        "mixed": 0,
+        "empty": 2,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/ext/registrations/commands.ts",
+      "stats": {
+        "total": 40,
+        "source": 36,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 4,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/core/bootstrap.ts",
+      "stats": {
+        "total": 39,
+        "source": 22,
+        "comment": 8,
+        "single": 8,
+        "block": 0,
+        "mixed": 0,
+        "empty": 9,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/core/config.ts",
+      "stats": {
+        "total": 88,
+        "source": 72,
+        "comment": 6,
+        "single": 6,
+        "block": 0,
+        "mixed": 2,
+        "empty": 12,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/core/di.ts",
+      "stats": {
+        "total": 21,
+        "source": 18,
+        "comment": 0,
+        "single": 0,
+        "block": 0,
+        "mixed": 0,
+        "empty": 3,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/core/errors.ts",
+      "stats": {
+        "total": 22,
+        "source": 18,
+        "comment": 1,
+        "single": 1,
+        "block": 0,
+        "mixed": 0,
+        "empty": 3,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/core/event-bus.ts",
+      "stats": {
+        "total": 40,
+        "source": 32,
+        "comment": 1,
+        "single": 1,
+        "block": 0,
+        "mixed": 0,
+        "empty": 7,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/core/events.ts",
+      "stats": {
+        "total": 80,
+        "source": 54,
+        "comment": 8,
+        "single": 8,
+        "block": 0,
+        "mixed": 0,
+        "empty": 18,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/core/manager.ts",
+      "stats": {
+        "total": 367,
+        "source": 307,
+        "comment": 24,
+        "single": 24,
+        "block": 0,
+        "mixed": 0,
+        "empty": 36,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/core/policy.ts",
+      "stats": {
+        "total": 47,
+        "source": 38,
+        "comment": 4,
+        "single": 4,
+        "block": 0,
+        "mixed": 1,
+        "empty": 6,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/config/secrets.ts",
+      "stats": {
+        "total": 34,
+        "source": 19,
+        "comment": 8,
+        "single": 8,
+        "block": 0,
+        "mixed": 0,
+        "empty": 7,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    },
+    {
+      "path": "src/config/settings.ts",
+      "stats": {
+        "total": 38,
+        "source": 25,
+        "comment": 6,
+        "single": 6,
+        "block": 0,
+        "mixed": 0,
+        "empty": 7,
+        "todo": 0,
+        "blockEmpty": 0
+      },
+      "badFile": false
+    }
+  ],
+  "summary": {
+    "total": 4138,
+    "source": 3243,
+    "comment": 355,
+    "single": 328,
+    "block": 27,
+    "mixed": 24,
+    "empty": 564,
+    "todo": 5,
+    "blockEmpty": 0
+  },
+  "byExt": {
+    "ts": {
+      "files": [
+        {
+          "path": "src/ui/bootstrap.ts",
+          "stats": {
+            "total": 67,
+            "source": 51,
+            "comment": 7,
+            "single": 7,
+            "block": 0,
+            "mixed": 0,
+            "empty": 9,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ui/bridge.ts",
+          "stats": {
+            "total": 78,
+            "source": 60,
+            "comment": 8,
+            "single": 8,
+            "block": 0,
+            "mixed": 0,
+            "empty": 10,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ui/chat-panel-manager.ts",
+          "stats": {
+            "total": 18,
+            "source": 15,
+            "comment": 1,
+            "single": 1,
+            "block": 0,
+            "mixed": 0,
+            "empty": 2,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ui/chat-webview.ts",
+          "stats": {
+            "total": 429,
+            "source": 368,
+            "comment": 29,
+            "single": 23,
+            "block": 6,
+            "mixed": 4,
+            "empty": 36,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ui/composer-bootstrap.ts",
+          "stats": {
+            "total": 76,
+            "source": 56,
+            "comment": 10,
+            "single": 10,
+            "block": 0,
+            "mixed": 1,
+            "empty": 11,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ui/controllers.ts",
+          "stats": {
+            "total": 121,
+            "source": 101,
+            "comment": 5,
+            "single": 5,
+            "block": 0,
+            "mixed": 2,
+            "empty": 17,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ui/elements-registry.ts",
+          "stats": {
+            "total": 72,
+            "source": 60,
+            "comment": 4,
+            "single": 4,
+            "block": 0,
+            "mixed": 1,
+            "empty": 9,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ui/renderer.ts",
+          "stats": {
+            "total": 101,
+            "source": 76,
+            "comment": 8,
+            "single": 8,
+            "block": 0,
+            "mixed": 0,
+            "empty": 17,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ui/statusbar/logs-button.ts",
+          "stats": {
+            "total": 10,
+            "source": 9,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 1,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/types/chat.ts",
+          "stats": {
+            "total": 33,
+            "source": 28,
+            "comment": 2,
+            "single": 2,
+            "block": 0,
+            "mixed": 1,
+            "empty": 4,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/types/ipc.ts",
+          "stats": {
+            "total": 10,
+            "source": 6,
+            "comment": 1,
+            "single": 1,
+            "block": 0,
+            "mixed": 0,
+            "empty": 3,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/types/result.ts",
+          "stats": {
+            "total": 7,
+            "source": 5,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 2,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/types/tools.ts",
+          "stats": {
+            "total": 10,
+            "source": 8,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 2,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/transport/client.ts",
+          "stats": {
+            "total": 130,
+            "source": 108,
+            "comment": 6,
+            "single": 6,
+            "block": 0,
+            "mixed": 0,
+            "empty": 16,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/transport/http.ts",
+          "stats": {
+            "total": 53,
+            "source": 47,
+            "comment": 1,
+            "single": 1,
+            "block": 0,
+            "mixed": 0,
+            "empty": 5,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/transport/types.ts",
+          "stats": {
+            "total": 38,
+            "source": 31,
+            "comment": 2,
+            "single": 2,
+            "block": 0,
+            "mixed": 0,
+            "empty": 5,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/transport/ws-handler.ts",
+          "stats": {
+            "total": 134,
+            "source": 110,
+            "comment": 10,
+            "single": 10,
+            "block": 0,
+            "mixed": 2,
+            "empty": 16,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/tools/shell-tool.ts",
+          "stats": {
+            "total": 29,
+            "source": 19,
+            "comment": 5,
+            "single": 5,
+            "block": 0,
+            "mixed": 0,
+            "empty": 5,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/tools/tool-bus.ts",
+          "stats": {
+            "total": 44,
+            "source": 30,
+            "comment": 6,
+            "single": 6,
+            "block": 0,
+            "mixed": 0,
+            "empty": 8,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/telemetry/err.ts",
+          "stats": {
+            "total": 12,
+            "source": 10,
+            "comment": 1,
+            "single": 1,
+            "block": 0,
+            "mixed": 0,
+            "empty": 1,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/telemetry/errors.ts",
+          "stats": {
+            "total": 24,
+            "source": 20,
+            "comment": 1,
+            "single": 1,
+            "block": 0,
+            "mixed": 0,
+            "empty": 3,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/telemetry/log.ts",
+          "stats": {
+            "total": 6,
+            "source": 2,
+            "comment": 2,
+            "single": 2,
+            "block": 0,
+            "mixed": 0,
+            "empty": 2,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/telemetry/logger.ts",
+          "stats": {
+            "total": 65,
+            "source": 40,
+            "comment": 12,
+            "single": 12,
+            "block": 0,
+            "mixed": 0,
+            "empty": 13,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/telemetry/metrics.ts",
+          "stats": {
+            "total": 68,
+            "source": 47,
+            "comment": 9,
+            "single": 9,
+            "block": 0,
+            "mixed": 0,
+            "empty": 12,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/telemetry/reporter.ts",
+          "stats": {
+            "total": 53,
+            "source": 31,
+            "comment": 11,
+            "single": 11,
+            "block": 0,
+            "mixed": 0,
+            "empty": 11,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/state/migrations.ts",
+          "stats": {
+            "total": 115,
+            "source": 87,
+            "comment": 15,
+            "single": 15,
+            "block": 0,
+            "mixed": 0,
+            "empty": 13,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/state/session-store.ts",
+          "stats": {
+            "total": 145,
+            "source": 113,
+            "comment": 12,
+            "single": 12,
+            "block": 0,
+            "mixed": 0,
+            "empty": 20,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/composer/bridge.ts",
+          "stats": {
+            "total": 32,
+            "source": 20,
+            "comment": 5,
+            "single": 5,
+            "block": 0,
+            "mixed": 0,
+            "empty": 7,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/composer/composer-dom.ts",
+          "stats": {
+            "total": 176,
+            "source": 154,
+            "comment": 4,
+            "single": 4,
+            "block": 0,
+            "mixed": 0,
+            "empty": 18,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/composer/css.d.ts",
+          "stats": {
+            "total": 4,
+            "source": 4,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 0,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/composer/index.ts",
+          "stats": {
+            "total": 11,
+            "source": 6,
+            "comment": 2,
+            "single": 2,
+            "block": 0,
+            "mixed": 0,
+            "empty": 3,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/composer/markdown.ts",
+          "stats": {
+            "total": 27,
+            "source": 18,
+            "comment": 3,
+            "single": 3,
+            "block": 0,
+            "mixed": 0,
+            "empty": 6,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/composer/sanitize.ts",
+          "stats": {
+            "total": 78,
+            "source": 67,
+            "comment": 5,
+            "single": 5,
+            "block": 0,
+            "mixed": 1,
+            "empty": 7,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/composer/slash.ts",
+          "stats": {
+            "total": 10,
+            "source": 6,
+            "comment": 3,
+            "single": 3,
+            "block": 0,
+            "mixed": 1,
+            "empty": 2,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/composer/types.ts",
+          "stats": {
+            "total": 37,
+            "source": 31,
+            "comment": 4,
+            "single": 4,
+            "block": 0,
+            "mixed": 3,
+            "empty": 5,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/BaseAnalyzer.ts",
+          "stats": {
+            "total": 144,
+            "source": 102,
+            "comment": 24,
+            "single": 5,
+            "block": 19,
+            "mixed": 0,
+            "empty": 18,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/CodeSmellAnalyzer.ts",
+          "stats": {
+            "total": 48,
+            "source": 40,
+            "comment": 1,
+            "single": 1,
+            "block": 0,
+            "mixed": 0,
+            "empty": 7,
+            "todo": 5,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/ConfigLoader.ts",
+          "stats": {
+            "total": 48,
+            "source": 39,
+            "comment": 4,
+            "single": 4,
+            "block": 0,
+            "mixed": 0,
+            "empty": 5,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/CoreAnalyzer.ts",
+          "stats": {
+            "total": 44,
+            "source": 39,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 5,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/FunctionSizeAnalyzer.ts",
+          "stats": {
+            "total": 97,
+            "source": 75,
+            "comment": 5,
+            "single": 5,
+            "block": 0,
+            "mixed": 0,
+            "empty": 17,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/LineCountAnalyzer.ts",
+          "stats": {
+            "total": 35,
+            "source": 29,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 6,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/NestingAnalyzer.ts",
+          "stats": {
+            "total": 71,
+            "source": 57,
+            "comment": 4,
+            "single": 4,
+            "block": 0,
+            "mixed": 1,
+            "empty": 11,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/ReportGenerator.ts",
+          "stats": {
+            "total": 93,
+            "source": 69,
+            "comment": 8,
+            "single": 8,
+            "block": 0,
+            "mixed": 0,
+            "empty": 16,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/cli.ts",
+          "stats": {
+            "total": 59,
+            "source": 40,
+            "comment": 7,
+            "single": 6,
+            "block": 1,
+            "mixed": 1,
+            "empty": 13,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/modules/QwenCoreAnalysis/index.ts",
+          "stats": {
+            "total": 5,
+            "source": 4,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 1,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ext/extension.ts",
+          "stats": {
+            "total": 12,
+            "source": 7,
+            "comment": 3,
+            "single": 3,
+            "block": 0,
+            "mixed": 0,
+            "empty": 2,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/ext/registrations/commands.ts",
+          "stats": {
+            "total": 40,
+            "source": 36,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 4,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/core/bootstrap.ts",
+          "stats": {
+            "total": 39,
+            "source": 22,
+            "comment": 8,
+            "single": 8,
+            "block": 0,
+            "mixed": 0,
+            "empty": 9,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/core/config.ts",
+          "stats": {
+            "total": 88,
+            "source": 72,
+            "comment": 6,
+            "single": 6,
+            "block": 0,
+            "mixed": 2,
+            "empty": 12,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/core/di.ts",
+          "stats": {
+            "total": 21,
+            "source": 18,
+            "comment": 0,
+            "single": 0,
+            "block": 0,
+            "mixed": 0,
+            "empty": 3,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/core/errors.ts",
+          "stats": {
+            "total": 22,
+            "source": 18,
+            "comment": 1,
+            "single": 1,
+            "block": 0,
+            "mixed": 0,
+            "empty": 3,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/core/event-bus.ts",
+          "stats": {
+            "total": 40,
+            "source": 32,
+            "comment": 1,
+            "single": 1,
+            "block": 0,
+            "mixed": 0,
+            "empty": 7,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/core/events.ts",
+          "stats": {
+            "total": 80,
+            "source": 54,
+            "comment": 8,
+            "single": 8,
+            "block": 0,
+            "mixed": 0,
+            "empty": 18,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/core/manager.ts",
+          "stats": {
+            "total": 367,
+            "source": 307,
+            "comment": 24,
+            "single": 24,
+            "block": 0,
+            "mixed": 0,
+            "empty": 36,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/core/policy.ts",
+          "stats": {
+            "total": 47,
+            "source": 38,
+            "comment": 4,
+            "single": 4,
+            "block": 0,
+            "mixed": 1,
+            "empty": 6,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/config/secrets.ts",
+          "stats": {
+            "total": 34,
+            "source": 19,
+            "comment": 8,
+            "single": 8,
+            "block": 0,
+            "mixed": 0,
+            "empty": 7,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/config/settings.ts",
+          "stats": {
+            "total": 38,
+            "source": 25,
+            "comment": 6,
+            "single": 6,
+            "block": 0,
+            "mixed": 0,
+            "empty": 7,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        }
+      ],
+      "summary": {
+        "total": 3795,
+        "source": 2986,
+        "comment": 316,
+        "single": 290,
+        "block": 26,
+        "mixed": 21,
+        "empty": 514,
+        "todo": 5,
+        "blockEmpty": 0
+      }
+    },
+    "js": {
+      "files": [
+        {
+          "path": "src/scripts/consolidate-docs.js",
+          "stats": {
+            "total": 76,
+            "source": 52,
+            "comment": 11,
+            "single": 11,
+            "block": 0,
+            "mixed": 0,
+            "empty": 13,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        },
+        {
+          "path": "src/scripts/package-project.js",
+          "stats": {
+            "total": 115,
+            "source": 70,
+            "comment": 23,
+            "single": 23,
+            "block": 0,
+            "mixed": 2,
+            "empty": 24,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        }
+      ],
+      "summary": {
+        "total": 191,
+        "source": 122,
+        "comment": 34,
+        "single": 34,
+        "block": 0,
+        "mixed": 2,
+        "empty": 37,
+        "todo": 0,
+        "blockEmpty": 0
+      }
+    },
+    "tsx": {
+      "files": [
+        {
+          "path": "src/modules/composer/composer.tsx",
+          "stats": {
+            "total": 145,
+            "source": 129,
+            "comment": 4,
+            "single": 4,
+            "block": 0,
+            "mixed": 1,
+            "empty": 13,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        }
+      ],
+      "summary": {
+        "total": 145,
+        "source": 129,
+        "comment": 4,
+        "single": 4,
+        "block": 0,
+        "mixed": 1,
+        "empty": 13,
+        "todo": 0,
+        "blockEmpty": 0
+      }
+    },
+    "css": {
+      "files": [
+        {
+          "path": "src/modules/composer/style.css",
+          "stats": {
+            "total": 7,
+            "source": 6,
+            "comment": 1,
+            "single": 0,
+            "block": 1,
+            "mixed": 0,
+            "empty": 0,
+            "todo": 0,
+            "blockEmpty": 0
+          },
+          "badFile": false
+        }
+      ],
+      "summary": {
+        "total": 7,
+        "source": 6,
+        "comment": 1,
+        "single": 0,
+        "block": 1,
+        "mixed": 0,
+        "empty": 0,
+        "todo": 0,
+        "blockEmpty": 0
+      }
+    }
+  }
+}
+undefined
+ ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL  Command "typhonjs-escomplex" not found
