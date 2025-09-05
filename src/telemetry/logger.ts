@@ -1,5 +1,6 @@
 // Structured logger
 // This file implements a structured logger for the extension
+// For consistent logging across the application, use the singleton instance from '@/telemetry/log'
 
 import * as vscode from "vscode";
 

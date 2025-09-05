@@ -3,20 +3,18 @@
 ## Logger
 
 - Logger class: `src/telemetry/logger.ts`
+- Singleton instance: `src/telemetry/log.ts`
 - Integrated in: `src/core/bootstrap.ts`
 
 ### Usage
 
-The logger is integrated into the extension's bootstrap process and can be used throughout the extension lifecycle:
+The logger is integrated into the extension's bootstrap process and should be used throughout the extension lifecycle. A singleton instance is provided for consistent logging across all modules:
 
 ```ts
 // In your class or function
-import { Logger } from "@/telemetry/logger";
+import { log as logger } from "@/telemetry/log";
 
-// Create an instance (typically done in bootstrap)
-const logger = new Logger();
-
-// Log messages at different levels
+// Log messages at different levels using the singleton instance
 logger.info("This is an info message", { key: "value" });
 logger.warn("This is a warning", { warningCode: 123 });
 logger.error("This is an error", { errorCode: 500 });
@@ -25,6 +23,8 @@ logger.debug("This is a debug message", { debugInfo: "detailed data" });
 // Show the output channel
 logger.show();
 ```
+
+All modules should use the singleton logger instance rather than creating new instances to ensure consistent logging throughout the application.
 
 ### Command
 

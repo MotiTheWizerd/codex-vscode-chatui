@@ -21,8 +21,14 @@
     {{HEAD_PARTS}} {{STYLES}}
   </head>
   <body>
-    <div id="messagesContainer" class="messages-container"></div>
-    <!-- Injected body fragments -->
-    {{BODY_PARTS}} {{SCRIPTS}}
+    <div class="chat-container">
+      {{HEADER_PARTS}}
+      <div id="messagesContainer" class="messages-container" data-el="message-list">
+        <!-- Injected message fragments -->
+        {{MESSAGE_PARTS}}
+      </div>
+    </div>
+    <div class="input-container" data-el="composer">{{FOOTER_PARTS}}</div>
+    {{SCRIPTS}}
   </body>
 </html>

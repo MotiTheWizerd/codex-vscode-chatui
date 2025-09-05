@@ -1,343 +1,712 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Assistant Chat</title>
-   
-  </head>
-  <body>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1e1e1e;
+            color: #cccccc;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: #3c3c3c #1e1e1e;
+        }
+
+        .messages-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #3c3c3c;
+            border-radius: 4px;
+        }
+
+        .message {
+            margin-bottom: 24px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .message-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            background: linear-gradient(135deg, #007acc, #005a9e);
+            color: white;
+        }
+
+        .assistant-avatar {
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #808080;
+        }
+
+        .message-content {
+            line-height: 1.6;
+            margin-left: 32px;
+        }
+
+        .thinking-indicator {
+            color: #808080;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+
+        .code-block {
+            background: #2d2d30;
+            border-radius: 6px;
+            margin: 12px 0;
+            border-left: 3px solid #ffd700;
+            overflow: hidden;
+        }
+
+        .code-header {
+            background: #323233;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #404040;
+        }
+
+        .code-language {
+            font-size: 11px;
+            color: #ffd700;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .file-indicator {
+            font-size: 11px;
+            color: #4ec9b0;
+        }
+
+        .code-content {
+            padding: 16px;
+            font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #d4d4d4;
+            overflow-x: auto;
+        }
+
+        /* Tool Call Styles */
+        .tool-call {
+            border-radius: 6px;
+            margin: 12px 0;
+            overflow: hidden;
+            border-left: 3px solid;
+        }
+
+        .tool-call.read {
+            background: #1a1a2e;
+            border-left-color: #4fc3f7;
+        }
+
+        .tool-call.write {
+            background: #1a2f1a;
+            border-left-color: #66bb6a;
+        }
+
+        .tool-call.delete {
+            background: #2f1a1a;
+            border-left-color: #ef5350;
+        }
+
+        .tool-call.error {
+            background: #2d1a1a;
+            border-left-color: #f44336;
+        }
+
+        .tool-header {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid #404040;
+        }
+
+        .tool-call.read .tool-header {
+            background: #252540;
+        }
+
+        .tool-call.write .tool-header {
+            background: #253325;
+        }
+
+        .tool-call.delete .tool-header {
+            background: #402525;
+        }
+
+        .tool-call.error .tool-header {
+            background: #3d2525;
+        }
+
+        .tool-icon {
+            font-size: 14px;
+        }
+
+        .tool-call.read .tool-icon {
+            color: #4fc3f7;
+        }
+
+        .tool-call.write .tool-icon {
+            color: #66bb6a;
+        }
+
+        .tool-call.delete .tool-icon {
+            color: #ef5350;
+        }
+
+        .tool-call.error .tool-icon {
+            color: #f44336;
+        }
+
+        .tool-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .tool-params {
+            font-size: 11px;
+            color: #888;
+            margin-left: auto;
+        }
+
+        .tool-content {
+            padding: 16px;
+            font-family: 'Cascadia Code', monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            color: #d4d4d4;
+        }
+
+        .tool-result {
+            background: #1a1a1a;
+            border-top: 1px solid #404040;
+            padding: 12px 16px;
+        }
+
+        .tool-result-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 6px;
+            opacity: 0.7;
+        }
+
+        .tool-call.read .tool-result-label {
+            color: #4fc3f7;
+        }
+
+        .tool-call.write .tool-result-label {
+            color: #66bb6a;
+        }
+
+        .tool-call.delete .tool-result-label {
+            color: #ef5350;
+        }
+
+        .tool-call.error .tool-result-label {
+            color: #f44336;
+        }
+
+        .file-created {
+            background: #1a2f1a;
+            border-left: 3px solid #4caf50;
+            border-radius: 6px;
+            padding: 12px;
+            margin: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .file-created-icon {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .file-name {
+            font-family: 'Cascadia Code', monospace;
+            color: #4ec9b0;
+        }
+
+        .file-status {
+            background: #4caf50;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .input-container {
+            background: #2d2d30;
+            border-top: 1px solid #404040;
+            padding: 16px;
+        }
+
+        .context-bar {
+            background: #252526;
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #cccccc;
+        }
+
+        .context-icon {
+            color: #ffd700;
+        }
+
+        .agent-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .agent-label {
+            font-size: 12px;
+            color: #cccccc;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .agent-dropdown {
+            background: #3c3c3c;
+            border: 1px solid #404040;
+            border-radius: 4px;
+            color: #cccccc;
+            padding: 4px 8px;
+            font-size: 12px;
+            outline: none;
+        }
+
+        .agent-dropdown:focus {
+            border-color: #ffd700;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            background: #1e1e1e;
+            border: 1px solid #404040;
+            border-radius: 8px;
+            padding: 12px;
+            transition: border-color 0.2s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #ffd700;
+            box-shadow: 0 0 0 1px #ffd700;
+        }
+
+        .input-field {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #cccccc;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            resize: none;
+            min-height: 20px;
+            max-height: 120px;
+            line-height: 1.4;
+        }
+
+        .input-field::placeholder {
+            color: #6c6c6c;
+        }
+
+        .input-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .action-button {
+            background: transparent;
+            border: none;
+            color: #cccccc;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-button:hover {
+            background: #404040;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #ffd700, #ffb300);
+            color: #1e1e1e;
+        }
+
+        .send-button:hover {
+            background: linear-gradient(135deg, #ffb300, #ff8f00);
+        }
+
+        .send-button:disabled {
+            background: #3c3c3c;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .shortcut-hint {
+            font-size: 10px;
+            color: #808080;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        .syntax-highlight .keyword { color: #569cd6; }
+        .syntax-highlight .string { color: #ce9178; }
+        .syntax-highlight .comment { color: #6a9955; }
+        .syntax-highlight .function { color: #dcdcaa; }
+        .syntax-highlight .variable { color: #4fc1ff; }
+    </style>
+</head>
+<body>
     <div class="chat-container">
-      <div class="messages-container" id="messagesContainer">
-        <div class="message">
-          <div class="message-header">
-            <div class="message-avatar user-avatar">U</div>
-            <div class="message-time">2m ago</div>
-          </div>
-          <div class="message-content">
-            hi create me a js folder with basic files
-          </div>
-        </div>
-
-        <div class="message">
-          <div class="message-header">
-            <div class="message-avatar assistant-avatar">AI</div>
-            <div class="message-time">2m ago</div>
-          </div>
-          <div class="message-content">
-            <div class="thinking-indicator">Thought for 4s</div>
-            <p>
-              Of course. I can help with that. I will create a
-              <code>js</code> folder for you with some basic files to get you
-              started. I'll create <code>app.js</code> for your main application
-              logic, <code>utils.js</code> for any helper functions you might
-              need, and <code>main.js</code> as the entry point.
-            </p>
-
-            <p>I'll start by creating the folder structure and files:</p>
-
-            <div class="tool-call write">
-              <div class="tool-header">
-                <span class="tool-icon">✏️</span>
-                <span class="tool-name">write_file</span>
-                <span class="tool-params">path: "./js/app.js"</span>
-              </div>
-              <div class="tool-content syntax-highlight">
-                <span class="comment">// Main application logic</span>
-                <span class="keyword">class</span>
-                <span class="function">App</span> {
-                <span class="function">constructor</span>() {
-                <span class="keyword">this</span>.<span class="variable"
-                  >initialized</span
-                >
-                = <span class="keyword">false</span>; }
-
-                <span class="function">init</span>() {
-                <span class="function">console</span>.<span class="function"
-                  >log</span
-                >(<span class="string">'App initialized'</span>);
-                <span class="keyword">this</span>.<span class="variable"
-                  >initialized</span
-                >
-                = <span class="keyword">true</span>; } }
-
-                <span class="keyword">export</span>
-                <span class="keyword">default</span>
-                <span class="function">App</span>;
-              </div>
-              <div class="tool-result">
-                <div class="tool-result-label">File Written Successfully</div>
-                <div>Created: ./js/app.js • 187 bytes written</div>
-              </div>
-            </div>
-
-            <div class="tool-call write">
-              <div class="tool-header">
-                <span class="tool-icon">✏️</span>
-                <span class="tool-name">write_file</span>
-                <span class="tool-params">path: "./js/utils.js"</span>
-              </div>
-              <div class="tool-content syntax-highlight">
-                <span class="comment">// Utility functions</span>
-                <span class="keyword">export</span>
-                <span class="keyword">function</span>
-                <span class="function">formatDate</span>(<span class="variable"
-                  >date</span
-                >) { <span class="keyword">return</span>
-                <span class="variable">date</span>.<span class="function"
-                  >toISOString</span
-                >().<span class="function">split</span>(<span class="string"
-                  >'T'</span
-                >)[<span class="keyword">0</span>]; }
-
-                <span class="keyword">export</span>
-                <span class="keyword">function</span>
-                <span class="function">debounce</span>(<span class="variable"
-                  >func</span
-                >, <span class="variable">delay</span>) {
-                <span class="keyword">let</span>
-                <span class="variable">timeoutId</span>;
-                <span class="keyword">return</span> (...<span class="variable"
-                  >args</span
-                >) => { <span class="function">clearTimeout</span>(<span
-                  class="variable"
-                  >timeoutId</span
-                >); <span class="variable">timeoutId</span> =
-                <span class="function">setTimeout</span>(() =>
-                <span class="variable">func</span>.<span class="function"
-                  >apply</span
-                >(<span class="keyword">this</span>,
-                <span class="variable">args</span>),
-                <span class="variable">delay</span>); }; }
-              </div>
-              <div class="tool-result">
-                <div class="tool-result-label">File Written Successfully</div>
-                <div>Created: ./js/utils.js • 295 bytes written</div>
-              </div>
-            </div>
-
-            <div class="tool-call write">
-              <div class="tool-header">
-                <span class="tool-icon">✏️</span>
-                <span class="tool-name">write_file</span>
-                <span class="tool-params">path: "./js/main.js"</span>
-              </div>
-              <div class="tool-content syntax-highlight">
-                <span class="keyword">import</span>
-                <span class="function">App</span>
-                <span class="keyword">from</span>
-                <span class="string">'./app.js'</span>;
-
-                <span class="comment">// Initialize the application</span>
-                <span class="keyword">const</span>
-                <span class="variable">app</span> =
-                <span class="keyword">new</span>
-                <span class="function">App</span>();
-                <span class="variable">app</span>.<span class="function"
-                  >init</span
-                >();
-              </div>
-              <div class="tool-result">
-                <div class="tool-result-label">File Written Successfully</div>
-                <div>Created: ./js/main.js • 98 bytes written</div>
-              </div>
-            </div>
-
-            <p>
-              Perfect! I have successfully created the <code>js</code> folder
-              with three essential files. Let me also clean up an old file
-              that's no longer needed:
-            </p>
-
-            <div class="tool-call delete">
-              <div class="tool-header">
-                <span class="tool-icon">🗑️</span>
-                <span class="tool-name">delete_file</span>
-                <span class="tool-params">path: "./old-config.json"</span>
-              </div>
-              <div class="tool-result">
-                <div class="tool-result-label">File Deleted Successfully</div>
-                <div>Removed: ./old-config.json • Size was: 2.1 KB</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="message">
-          <div class="message-header">
-            <div class="message-avatar user-avatar">U</div>
-            <div class="message-time">1m ago</div>
-          </div>
-          <div class="message-content">search for all html files</div>
-        </div>
-
-        <div class="message">
-          <div class="message-header">
-            <div class="message-avatar assistant-avatar">AI</div>
-            <div class="message-time">1m ago</div>
-          </div>
-          <div class="message-content">
-            <div class="thinking-indicator">Thought for 4s</div>
-            <p>
-              Of course. I will search for all HTML files in the current project
-              directory.
-            </p>
-
-            <div class="tool-call read">
-              <div class="tool-header">
-                <span class="tool-icon">🔍</span>
-                <span class="tool-name">search_files</span>
-                <span class="tool-params"
-                  >pattern: "*.html", directory: "./src"</span
-                >
-              </div>
-              <div class="tool-content">
-                Found HTML files: - ./src/index.html - ./src/pages/about.html -
-                ./src/templates/layout.html - ./dist/index.html
-              </div>
-              <div class="tool-result">
-                <div class="tool-result-label">Search Completed</div>
-                <div>4 files found • Searched 47 files in 0.12s</div>
-              </div>
-            </div>
-
-            <p>
-              Let me also try to read a file that might not exist to show error
-              handling:
-            </p>
-
-            <div class="tool-call error">
-              <div class="tool-header">
-                <span class="tool-icon">⚠️</span>
-                <span class="tool-name">read_file</span>
-                <span class="tool-params">path: "./nonexistent.html"</span>
-              </div>
-              <div class="tool-result">
-                <div class="tool-result-label">Error</div>
-                <div>
-                  ENOENT: no such file or directory './nonexistent.html'
+        <div class="messages-container" id="messagesContainer">
+            <div class="message">
+                <div class="message-header">
+                    <div class="message-avatar user-avatar">U</div>
+                    <div class="message-time">2m ago</div>
                 </div>
-              </div>
+                <div class="message-content">
+                    hi create me a js folder with basic files
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="input-container">
-        <div class="context-bar">
-          <span class="context-icon">@</span>
-          <span>Add Context</span>
-          <span style="margin-left: auto; color: #808080"
-            >Plan, search, build anything</span
-          >
+            <div class="message">
+                <div class="message-header">
+                    <div class="message-avatar assistant-avatar">AI</div>
+                    <div class="message-time">2m ago</div>
+                </div>
+                <div class="message-content">
+                    <div class="thinking-indicator">Thought for 4s</div>
+                    <p>Of course. I can help with that. I will create a <code>js</code> folder for you with some basic files to get you started. I'll create <code>app.js</code> for your main application logic, <code>utils.js</code> for any helper functions you might need, and <code>main.js</code> as the entry point.</p>
+
+                    <p>I'll start by creating the folder structure and files:</p>
+
+                    <div class="tool-call write">
+                        <div class="tool-header">
+                            <span class="tool-icon">✏️</span>
+                            <span class="tool-name">write_file</span>
+                            <span class="tool-params">path: "./js/app.js"</span>
+                        </div>
+                        <div class="tool-content syntax-highlight">
+<span class="comment">// Main application logic</span>
+<span class="keyword">class</span> <span class="function">App</span> {
+  <span class="function">constructor</span>() {
+    <span class="keyword">this</span>.<span class="variable">initialized</span> = <span class="keyword">false</span>;
+  }
+
+  <span class="function">init</span>() {
+    <span class="function">console</span>.<span class="function">log</span>(<span class="string">'App initialized'</span>);
+    <span class="keyword">this</span>.<span class="variable">initialized</span> = <span class="keyword">true</span>;
+  }
+}
+
+<span class="keyword">export</span> <span class="keyword">default</span> <span class="function">App</span>;
+                        </div>
+                        <div class="tool-result">
+                            <div class="tool-result-label">File Written Successfully</div>
+                            <div>Created: ./js/app.js • 187 bytes written</div>
+                        </div>
+                    </div>
+
+                    <div class="tool-call write">
+                        <div class="tool-header">
+                            <span class="tool-icon">✏️</span>
+                            <span class="tool-name">write_file</span>
+                            <span class="tool-params">path: "./js/utils.js"</span>
+                        </div>
+                        <div class="tool-content syntax-highlight">
+<span class="comment">// Utility functions</span>
+<span class="keyword">export</span> <span class="keyword">function</span> <span class="function">formatDate</span>(<span class="variable">date</span>) {
+  <span class="keyword">return</span> <span class="variable">date</span>.<span class="function">toISOString</span>().<span class="function">split</span>(<span class="string">'T'</span>)[<span class="keyword">0</span>];
+}
+
+<span class="keyword">export</span> <span class="keyword">function</span> <span class="function">debounce</span>(<span class="variable">func</span>, <span class="variable">delay</span>) {
+  <span class="keyword">let</span> <span class="variable">timeoutId</span>;
+  <span class="keyword">return</span> (...<span class="variable">args</span>) => {
+    <span class="function">clearTimeout</span>(<span class="variable">timeoutId</span>);
+    <span class="variable">timeoutId</span> = <span class="function">setTimeout</span>(() => <span class="variable">func</span>.<span class="function">apply</span>(<span class="keyword">this</span>, <span class="variable">args</span>), <span class="variable">delay</span>);
+  };
+}
+                        </div>
+                        <div class="tool-result">
+                            <div class="tool-result-label">File Written Successfully</div>
+                            <div>Created: ./js/utils.js • 295 bytes written</div>
+                        </div>
+                    </div>
+
+                    <div class="tool-call write">
+                        <div class="tool-header">
+                            <span class="tool-icon">✏️</span>
+                            <span class="tool-name">write_file</span>
+                            <span class="tool-params">path: "./js/main.js"</span>
+                        </div>
+                        <div class="tool-content syntax-highlight">
+<span class="keyword">import</span> <span class="function">App</span> <span class="keyword">from</span> <span class="string">'./app.js'</span>;
+
+<span class="comment">// Initialize the application</span>
+<span class="keyword">const</span> <span class="variable">app</span> = <span class="keyword">new</span> <span class="function">App</span>();
+<span class="variable">app</span>.<span class="function">init</span>();
+                        </div>
+                        <div class="tool-result">
+                            <div class="tool-result-label">File Written Successfully</div>
+                            <div>Created: ./js/main.js • 98 bytes written</div>
+                        </div>
+                    </div>
+
+                    <p>Perfect! I have successfully created the <code>js</code> folder with three essential files. Let me also clean up an old file that's no longer needed:</p>
+
+                    <div class="tool-call delete">
+                        <div class="tool-header">
+                            <span class="tool-icon">🗑️</span>
+                            <span class="tool-name">delete_file</span>
+                            <span class="tool-params">path: "./old-config.json"</span>
+                        </div>
+                        <div class="tool-result">
+                            <div class="tool-result-label">File Deleted Successfully</div>
+                            <div>Removed: ./old-config.json • Size was: 2.1 KB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="message-header">
+                    <div class="message-avatar user-avatar">U</div>
+                    <div class="message-time">1m ago</div>
+                </div>
+                <div class="message-content">
+                    search for all html files
+                </div>
+            </div>
+
+            <div class="message">
+                <div class="message-header">
+                    <div class="message-avatar assistant-avatar">AI</div>
+                    <div class="message-time">1m ago</div>
+                </div>
+                <div class="message-content">
+                    <div class="thinking-indicator">Thought for 4s</div>
+                    <p>Of course. I will search for all HTML files in the current project directory.</p>
+
+                    <div class="tool-call read">
+                        <div class="tool-header">
+                            <span class="tool-icon">🔍</span>
+                            <span class="tool-name">search_files</span>
+                            <span class="tool-params">pattern: "*.html", directory: "./src"</span>
+                        </div>
+                        <div class="tool-content">
+Found HTML files:
+- ./src/index.html
+- ./src/pages/about.html
+- ./src/templates/layout.html
+- ./dist/index.html
+                        </div>
+                        <div class="tool-result">
+                            <div class="tool-result-label">Search Completed</div>
+                            <div>4 files found • Searched 47 files in 0.12s</div>
+                        </div>
+                    </div>
+
+                    <p>Let me also try to read a file that might not exist to show error handling:</p>
+
+                    <div class="tool-call error">
+                        <div class="tool-header">
+                            <span class="tool-icon">⚠️</span>
+                            <span class="tool-name">read_file</span>
+                            <span class="tool-params">path: "./nonexistent.html"</span>
+                        </div>
+                        <div class="tool-result">
+                            <div class="tool-result-label">Error</div>
+                            <div>ENOENT: no such file or directory './nonexistent.html'</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div class="agent-selector">
-          <div class="agent-label">
-            <span>🤖</span>
-            Agent
-          </div>
-          <select class="agent-dropdown" id="agentSelect">
-            <option value="auto">Auto</option>
-            <option value="coding">Coding</option>
-            <option value="search">Search</option>
-            <option value="planning">Planning</option>
-          </select>
-        </div>
+        <div class="input-container">
+            <div class="context-bar">
+                <span class="context-icon">@</span>
+                <span>Add Context</span>
+                <span style="margin-left: auto; color: #808080;">Plan, search, build anything</span>
+            </div>
 
-        <div class="input-wrapper">
-          <textarea
-            class="input-field"
-            id="messageInput"
-            placeholder="Ask anything (Ctrl+I)"
-            rows="1"
-          ></textarea>
-          <div class="input-actions">
-            <button class="action-button" id="attachButton" title="Attach file">
-              📎
-            </button>
-            <button
-              class="action-button send-button"
-              id="sendButton"
-              title="Send message"
-            >
-              ➤
-            </button>
-          </div>
+            <div class="agent-selector">
+                <div class="agent-label">
+                    <span>🤖</span>
+                    Agent
+                </div>
+                <select class="agent-dropdown" id="agentSelect">
+                    <option value="auto">Auto</option>
+                    <option value="coding">Coding</option>
+                    <option value="search">Search</option>
+                    <option value="planning">Planning</option>
+                </select>
+            </div>
+
+            <div class="input-wrapper">
+                <textarea
+                    class="input-field"
+                    id="messageInput"
+                    placeholder="Ask anything (Ctrl+I)"
+                    rows="1"
+                ></textarea>
+                <div class="input-actions">
+                    <button class="action-button" id="attachButton" title="Attach file">
+                        📎
+                    </button>
+                    <button class="action-button send-button" id="sendButton" title="Send message">
+                        ➤
+                    </button>
+                </div>
+            </div>
+            <div class="shortcut-hint">Ctrl+Enter to send • Ctrl+I to focus</div>
         </div>
-        <div class="shortcut-hint">Ctrl+Enter to send • Ctrl+I to focus</div>
-      </div>
     </div>
 
     <script>
-      const messageInput = document.getElementById("messageInput");
-      const sendButton = document.getElementById("sendButton");
-      const messagesContainer = document.getElementById("messagesContainer");
-      const agentSelect = document.getElementById("agentSelect");
-      const attachButton = document.getElementById("attachButton");
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const messagesContainer = document.getElementById('messagesContainer');
+        const agentSelect = document.getElementById('agentSelect');
+        const attachButton = document.getElementById('attachButton');
 
-      // Auto-resize textarea
-      messageInput.addEventListener("input", function () {
-        this.style.height = "auto";
-        this.style.height = Math.min(this.scrollHeight, 120) + "px";
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 
-        // Enable/disable send button
-        sendButton.disabled = !this.value.trim();
-      });
+            // Enable/disable send button
+            sendButton.disabled = !this.value.trim();
+        });
 
-      // Send message on Ctrl+Enter
-      messageInput.addEventListener("keydown", function (e) {
-        if (e.ctrlKey && e.key === "Enter") {
-          sendMessage();
+        // Send message on Ctrl+Enter
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Focus on Ctrl+I
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'i') {
+                e.preventDefault();
+                messageInput.focus();
+            }
+        });
+
+        // Send button click
+        sendButton.addEventListener('click', sendMessage);
+
+        // Attach button click
+        attachButton.addEventListener('click', function() {
+            // Implement file attachment logic here
+            console.log('Attach file clicked');
+        });
+
+        function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+
+            // Clear input
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+            sendButton.disabled = true;
+
+            // Simulate AI response
+            setTimeout(() => {
+                addMessage('I understand. Let me help you with that...', 'assistant');
+            }, 1000);
         }
-      });
 
-      // Focus on Ctrl+I
-      document.addEventListener("keydown", function (e) {
-        if (e.ctrlKey && e.key === "i") {
-          e.preventDefault();
-          messageInput.focus();
-        }
-      });
+        function addMessage(content, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
 
-      // Send button click
-      sendButton.addEventListener("click", sendMessage);
+            const now = new Date();
+            const timeString = 'now';
 
-      // Attach button click
-      attachButton.addEventListener("click", function () {
-        // Implement file attachment logic here
-        console.log("Attach file clicked");
-      });
-
-      function sendMessage() {
-        const message = messageInput.value.trim();
-        if (!message) return;
-
-        // Add user message
-        addMessage(message, "user");
-
-        // Clear input
-        messageInput.value = "";
-        messageInput.style.height = "auto";
-        sendButton.disabled = true;
-
-        // Simulate AI response
-        setTimeout(() => {
-          addMessage("I understand. Let me help you with that...", "assistant");
-        }, 1000);
-      }
-
-      function addMessage(content, sender) {
-        const messageDiv = document.createElement("div");
-        messageDiv.className = "message";
-
-        const now = new Date();
-        const timeString = "now";
-
-        messageDiv.innerHTML = `
+            messageDiv.innerHTML = `
                 <div class="message-header">
                     <div class="message-avatar ${sender}-avatar">
-                        ${sender === "user" ? "U" : "AI"}
+                        ${sender === 'user' ? 'U' : 'AI'}
                     </div>
                     <div class="message-time">${timeString}</div>
                 </div>
@@ -346,12 +715,12 @@
                 </div>
             `;
 
-        messagesContainer.appendChild(messageDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-      }
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
 
-      // Initialize
-      sendButton.disabled = true;
+        // Initialize
+        sendButton.disabled = true;
     </script>
-  </body>
+</body>
 </html>

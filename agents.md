@@ -10,14 +10,14 @@
 
 # Before any task, perform these steps:
 
-1. Review the agent_manager_docs/ directory thoroughly
+1. Review the docs/ directory thoroughly
 2. Understand the current architecture
 3. Map out existing modules and their dependencies
 4. Identify affected components before making changes
 
 # After completing any task:
 
-1. Create/update documentation in agent_manager_docs/ folder
+1. Create/update documentation in docs/ folder
 2. Document the current working structure of modified modules
 3. Include working examples and API endpoints
 4. Exclude e/rror logs - focus on final working state only

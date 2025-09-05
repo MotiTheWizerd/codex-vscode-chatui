@@ -2,6 +2,7 @@
   background: #2d2d30;
   border-top: 1px solid #404040;
   padding: 16px;
+  flex-shrink: 0;
 }
 
 .context-bar {
@@ -67,18 +68,20 @@
 
 .input-field {
   flex: 1;
+  padding: 10px;
   background: transparent;
   border: none;
   color: #cccccc;
   font-size: 14px;
   font-family: inherit;
-  outline: none;
   resize: none;
   min-height: 20px;
   max-height: 120px;
   line-height: 1.4;
 }
-
+.input-wrapper #messageInput {
+  outline: none;
+}
 .input-field::placeholder {
   color: #6c6c6c;
 }

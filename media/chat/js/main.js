@@ -1,82 +1,34 @@
-const messageInput = document.getElementById("messageInput");
-const sendButton = document.getElementById("sendButton");
-const messagesContainer = document.getElementById("messagesContainer");
-const agentSelect = document.getElementById("agentSelect");
-const attachButton = document.getElementById("attachButton");
+// Tiny bootstrap only: create renderer, mountAll, ui.ready, and forward messages
+(function() {
+  const bridge = window.CodexBridge;
+  const renderer = new window.Renderer();
 
-// Auto-resize textarea
-messageInput.addEventListener("input", function () {
-  this.style.height = "auto";
-  this.style.height = Math.min(this.scrollHeight, 120) + "px";
-
-  // Enable/disable send button
-  sendButton.disabled = !this.value.trim();
-});
-
-// Send message on Ctrl+Enter
-messageInput.addEventListener("keydown", function (e) {
-  if (e.ctrlKey && e.key === "Enter") {
-    sendMessage();
+  function onLoad() {
+    renderer.mountAll(document);
+    // Announce readiness (schema version included for future-proofing)
+    bridge.post('ui.ready', { schemaVersion: 1 });
   }
-});
 
-// Focus on Ctrl+I
-document.addEventListener("keydown", function (e) {
-  if (e.ctrlKey && e.key === "i") {
-    e.preventDefault();
-    messageInput.focus();
-  }
-});
+  window.addEventListener('DOMContentLoaded', onLoad);
 
-// Send button click
-sendButton.addEventListener("click", sendMessage);
+  // Forward extension messages to renderer
+  bridge.on((msg) => {
+    if (!msg || !msg.type) return;
+    if (msg.type === 'init') {
+      const messages = (msg.payload && msg.payload.session && Array.isArray(msg.payload.session.messages))
+        ? msg.payload.session.messages
+        : [];
+      renderer.handle({ type: 'session.restore', messages });
+    }
+    else if (msg.type === 'assistant.commit') {
+      renderer.handle({ type: 'assistant.commit', text: msg.text });
+    }
+    else if (msg.type === 'assistant.token') {
+      // optional: could stream token into a pending assistant bubble later
+      // Keeping minimal per the frozen event set
+    }
+  });
 
-// Attach button click
-attachButton.addEventListener("click", function () {
-  // Implement file attachment logic here
-  console.log("Attach file clicked");
-});
-
-function sendMessage() {
-  const message = messageInput.value.trim();
-  if (!message) return;
-
-  // Add user message
-  addMessage(message, "user");
-
-  // Clear input
-  messageInput.value = "";
-  messageInput.style.height = "auto";
-  sendButton.disabled = true;
-
-  // Simulate AI response
-  setTimeout(() => {
-    addMessage("I understand. Let me help you with that...", "assistant");
-  }, 1000);
-}
-
-function addMessage(content, sender) {
-  const messageDiv = document.createElement("div");
-  messageDiv.className = "message";
-
-  const now = new Date();
-  const timeString = "now";
-
-  messageDiv.innerHTML = `
-        <div class="message-header">
-            <div class="message-avatar ${sender}-avatar">
-                ${sender === "user" ? "U" : "AI"}
-            </div>
-            <div class="message-time">${timeString}</div>
-        </div>
-        <div class="message-content">
-            ${content}
-        </div>
-    `;
-
-  messagesContainer.appendChild(messageDiv);
-  messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-
-// Initialize
-sendButton.disabled = true;
+  // Expose for debugging
+  window._codexRenderer = renderer;
+})();

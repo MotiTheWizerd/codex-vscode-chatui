@@ -13,3 +13,10 @@ body {
   flex-direction: column;
   overflow: hidden;
 }
+
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}

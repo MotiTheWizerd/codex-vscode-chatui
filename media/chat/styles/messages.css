@@ -1,6 +1,8 @@
 .messages-container {
   flex: 1;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
   padding: 20px;
   scrollbar-width: thin;
   scrollbar-color: #3c3c3c #1e1e1e;

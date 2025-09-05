@@ -26,8 +26,78 @@ export class ChatWebview implements vscode.Disposable {
     );
 
     // listen + cleanup
-    const recv = this.panel.webview.onDidReceiveMessage((msg) => {
-      this.logger?.info("from webview", msg);
+    const recv = this.panel.webview.onDidReceiveMessage(async (msg) => {
+      try {
+        if (!msg || typeof msg !== "object") return;
+        const type = msg.type as string | undefined;
+        this.logger?.info("from webview", msg);
+
+        // Handshake: UI announced readiness → send init payload
+        if (type === "ui.ready") {
+          const di = this.core.diContainer;
+          const sessionStore = di.has("sessionStore")
+            ? di.resolve<import("@/state/session-store").SessionStore>("sessionStore")
+            : null;
+          const config = this.core.config.getAll();
+          const features = this.core.config.getFeatures();
+
+          const session = sessionStore?.getCurrentSession() ?? null;
+          const uiMessages = session
+            ? session.messages.map((m) => ({
+                id: m.id,
+                role: m.role === "system" ? ("assistant" as const) : m.role, // UI expects 'user' | 'assistant'
+                text: m.content,
+              }))
+            : [];
+
+          this.panel.webview.postMessage({
+            type: "init",
+            payload: {
+              schemaVersion: 1,
+              session: { id: session?.id ?? null, messages: uiMessages },
+              features,
+              config: {
+                model: config.codex.model,
+                streaming: config.features.streaming,
+              },
+            },
+          });
+          return;
+        }
+
+        // User sent a message from UI → persist; transport may start separately
+        if (type === "chat.userMessage") {
+          const text: string | undefined = msg?.payload?.text ?? msg?.text;
+          if (!text || !text.trim()) return;
+          const di = this.core.diContainer;
+          if (di.has("sessionStore")) {
+            const store = di.resolve<import("@/state/session-store").SessionStore>(
+              "sessionStore"
+            );
+            await store.addMessageToCurrentSession({ role: "user", content: text });
+          }
+          // Mock assistant echo transport: respond after a short delay
+          setTimeout(async () => {
+            try {
+              const reply = `Echo: ${text}`;
+              if (di.has("sessionStore")) {
+                const store = di.resolve<import("@/state/session-store").SessionStore>(
+                  "sessionStore"
+                );
+                await store.addMessageToCurrentSession({ role: "assistant", content: reply });
+              }
+              this.panel.webview.postMessage({ type: "assistant.commit", text: reply });
+            } catch (e) {
+              const m = e instanceof Error ? e.message : String(e);
+              this.logger?.error?.("mock assistant failed", { error: m });
+            }
+          }, 250);
+          return;
+        }
+      } catch (e) {
+        const m = e instanceof Error ? e.message : String(e);
+        this.logger?.error?.("webview message handling error", { error: m });
+      }
     });
     const cleanup = this.panel.onDidDispose(() => this.dispose());
 
@@ -159,12 +229,19 @@ export class ChatWebview implements vscode.Disposable {
       let html = Buffer.from(bytes).toString("utf8");
       // inject CSP vars + asset tags + HTML fragments
       const headDir = vscode.Uri.joinPath(chatDir, "html", "head");
-      const bodyDir = vscode.Uri.joinPath(chatDir, "html", "body");
+      const headerDir = vscode.Uri.joinPath(chatDir, "html", "header");
+      const messageDir = vscode.Uri.joinPath(chatDir, "html", "messages");
+      const footerDir = vscode.Uri.joinPath(chatDir, "html", "footer");
       const headParts = await readFragments(headDir, this.logger);
-      const bodyParts = await readFragments(bodyDir, this.logger);
-      const bodyWithBanner = (bodyParts.warnings.length
+      const headerParts = await readFragments(headerDir, this.logger);
+      const messageParts = await readFragments(messageDir, this.logger);
+      const footerParts = await readFragments(footerDir, this.logger);
+      const messageWithBanner = (messageParts.warnings.length
         ? '<div class="codex-fragment-warning" role="alert">Some fragments were skipped. See logs.</div>\n'
-        : "") + bodyParts.html;
+        : "") + messageParts.html;
+      const footerWithBanner = (footerParts.warnings.length
+        ? '<div class="codex-fragment-warning" role="alert">Some fragments were skipped. See logs.</div>\n'
+        : "") + footerParts.html;
 
       html = html
         .replace(/{{CSP_SOURCE}}/g, webview.cspSource)
@@ -172,7 +249,9 @@ export class ChatWebview implements vscode.Disposable {
         .replace("{{STYLES}}", styleTags)
         .replace("{{SCRIPTS}}", scriptTags)
         .replace("{{HEAD_PARTS}}", headParts.html)
-        .replace("{{BODY_PARTS}}", bodyWithBanner);
+        .replace("{{HEADER_PARTS}}", headerParts.html)
+        .replace("{{MESSAGE_PARTS}}", messageWithBanner)
+        .replace("{{FOOTER_PARTS}}", footerWithBanner);
 
       webview.html = html;
     } catch (err) {

@@ -1,12 +1,11 @@
 import * as vscode from "vscode";
-import { Logger } from "@/telemetry/logger";
+import { log as logger } from "@/telemetry/log";
 import { CoreManager } from "@/core/manager";
 import { ChatPanelManager } from "@/ui/chat-panel-manager";
 
 export function registerCoreCommands(
   context: vscode.ExtensionContext,
-  core: CoreManager,
-  logger: Logger
+  core: CoreManager
 ): vscode.Disposable[] {
   const showMenu = vscode.commands.registerCommand("codex.showMenu", async () => {
     const picks: Array<vscode.QuickPickItem & { id: string }> = [

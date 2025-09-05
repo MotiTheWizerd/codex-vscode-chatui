@@ -1,11 +1,10 @@
 import * as vscode from "vscode";
-import { Logger } from "@/telemetry/logger";
+import { log as logger } from "@/telemetry/log";
 import { registerCoreCommands } from "@/ext/registrations/commands";
 import { createLogsStatusItem } from "@/ui/statusbar/logs-button";
 import { CoreManager } from "@/core/manager";
 
 export async function bootstrap(context: vscode.ExtensionContext) {
-  const logger = new Logger();
   context.subscriptions.push(logger);
 
   logger.info("Codex extension activated");
@@ -16,7 +15,7 @@ export async function bootstrap(context: vscode.ExtensionContext) {
   await core.initialize();
 
   // Register commands (kept in their own module)
-  const disposables = registerCoreCommands(context, core, logger);
+  const disposables = registerCoreCommands(context, core);
   context.subscriptions.push(...disposables);
 
   // Sidebar Activity Bar view removed; no WebviewView provider registration
