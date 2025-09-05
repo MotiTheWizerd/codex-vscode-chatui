@@ -81,6 +81,10 @@ export class FileMentionsController implements Disposable {
       this.input.removeEventListener('mouseup', this.onMouseup as EventListener);
     }
     document.removeEventListener('click', this.onClickOutside, true);
+    if (this.windowDragOverHandler) {
+      window.removeEventListener('dragover', this.windowDragOverHandler, { capture: true });
+      window.removeEventListener('drop', this.windowDropHandler!, { capture: true });
+    }
     if (this.popup && this.popup.parentNode) this.popup.parentNode.removeChild(this.popup);
     this.popup = null;
     this.root = null;
@@ -348,11 +352,13 @@ export class FileMentionsController implements Disposable {
     const handleDragOver = (e: DragEvent) => {
       const dt = e.dataTransfer;
       if (!dt) return;
-      if (!isSupported(dt)) return;
+      // Always prevent default to avoid browser navigation
       e.preventDefault();
       e.stopPropagation();
-      try { dt.dropEffect = 'copy'; } catch {}
-      container.classList.add('drop-target');
+      if (isSupported(dt)) {
+        try { dt.dropEffect = 'copy'; } catch {}
+        container.classList.add('drop-target');
+      }
     };
 
     const handleDragEnter = (e: DragEvent) => {
@@ -395,7 +401,17 @@ export class FileMentionsController implements Disposable {
       t.addEventListener('drop', handleDrop, { capture: true });
     }
 
-    // Document-level suppression to avoid VS Code default open on drop
+    // Window and document-level suppression to avoid VS Code default open on drop
+    const windowDragOver = (e: DragEvent) => {
+      // Unconditionally suppress VS Code default handling so drop doesn't open files/folders
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    const windowDrop = (e: DragEvent) => {
+      // Unconditionally suppress VS Code default handling
+      e.preventDefault();
+      e.stopPropagation();
+    };
     const docDragOver = (e: DragEvent) => {
       // Unconditionally suppress VS Code default handling so drop doesn't open files/folders
       e.preventDefault();
@@ -406,9 +422,20 @@ export class FileMentionsController implements Disposable {
       e.preventDefault();
       e.stopPropagation();
     };
-    document.addEventListener('dragover', docDragOver, { capture: true });
-    document.addEventListener('drop', docDrop, { capture: true });
+    // Use passive: false to ensure we can call preventDefault()
+    window.addEventListener('dragover', windowDragOver, { capture: true, passive: false });
+    window.addEventListener('drop', windowDrop, { capture: true, passive: false });
+    document.addEventListener('dragover', docDragOver, { capture: true, passive: false });
+    document.addEventListener('drop', docDrop, { capture: true, passive: false });
+
+    // Store references so we can remove them later
+    this.windowDragOverHandler = windowDragOver;
+    this.windowDropHandler = windowDrop;
   }
+
+  // Store references to window event handlers so we can remove them in dispose
+  private windowDragOverHandler: ((e: DragEvent) => void) | null = null;
+  private windowDropHandler: ((e: DragEvent) => void) | null = null;
 
   private createChip(doc: Document, path: string): HTMLElement {
     const el = doc.createElement('span');

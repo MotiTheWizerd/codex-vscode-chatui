@@ -101,6 +101,21 @@ export function mountComposer(host: HTMLElement, opts: ComposerOptions): Compose
 
   const addImageAttachment = (file: File) => {
     if (attachments.length >= 5) return;
+    
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      console.warn('Unsupported image type:', file.type);
+      return;
+    }
+    
+    // Validate file size (max 10MB)
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    if (file.size > maxSize) {
+      console.warn('File too large:', file.size);
+      return;
+    }
+    
     const url = URL.createObjectURL(file);
     objectUrls.push(url);
     const reader = new FileReader();

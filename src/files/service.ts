@@ -1,38 +1,47 @@
 // src/files/service.ts
-import * as vscode from 'vscode';
-import type { Logger } from '@/telemetry/logger.js';
-import type { FileEntry } from '@/files/types';
+import * as vscode from "vscode";
+import type { Logger } from "@/telemetry/logger.js";
+import type { FileEntry } from "@/files/types";
 
 const DEFAULT_EXCLUDES = [
-  '**/.git/**',
-  '**/node_modules/**',
-  '**/dist/**',
-  '**/out/**',
-  '**/coverage/**',
-  '**/*.map',
-  '**/*.min.*',
-  '**/*.png',
-  '**/*.jpg',
-  '**/*.jpeg',
-  '**/*.gif',
-  '**/*.zip',
-  '**/*.exe',
-  '**/*.dll',
-  '**/*.pdf',
-  '**/*.mp4',
-  '**/*.mov',
+  "**/.git/**",
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/out/**",
+  "**/coverage/**",
+  "**/*.map",
+  "**/*.min.*",
+  "**/*.png",
+  "**/*.jpg",
+  "**/*.jpeg",
+  "**/*.gif",
+  "**/*.zip",
+  "**/*.exe",
+  "**/*.dll",
+  "**/*.pdf",
+  "**/*.mp4",
+  "**/*.mov",
 ];
 
 function toRelPath(u: vscode.Uri): string {
   const folders = vscode.workspace.workspaceFolders || [];
-  const f = folders.find((wf) => u.fsPath.toLowerCase().startsWith(wf.uri.fsPath.toLowerCase()));
-  if (!f) return u.path.replace(/^\//, '');
-  const rel = u.fsPath.slice(f.uri.fsPath.length).replace(/\\/g, '/');
-  return rel.replace(/^\//, '');
+  const f = folders.find((wf) =>
+    u.fsPath.toLowerCase().startsWith(wf.uri.fsPath.toLowerCase())
+  );
+  if (!f) return u.path.replace(/^\//, "");
+  const rel = u.fsPath.slice(f.uri.fsPath.length).replace(/\\/g, "/");
+  return rel.replace(/^\//, "");
 }
 
-function basename(p: string): string { const idx = p.lastIndexOf('/'); return idx >= 0 ? p.slice(idx + 1) : p; }
-function extname(p: string): string { const b = basename(p); const i = b.lastIndexOf('.'); return i >= 0 ? b.slice(i) : ''; }
+function basename(p: string): string {
+  const idx = p.lastIndexOf("/");
+  return idx >= 0 ? p.slice(idx + 1) : p;
+}
+function extname(p: string): string {
+  const b = basename(p);
+  const i = b.lastIndexOf(".");
+  return i >= 0 ? b.slice(i) : "";
+}
 
 export class FilesService implements vscode.Disposable {
   private logger: Logger | null;
@@ -50,7 +59,10 @@ export class FilesService implements vscode.Disposable {
     void this.refreshIndex();
     // Set up watcher for changes
     try {
-      const pattern = new vscode.RelativePattern(vscode.workspace.workspaceFolders?.[0]?.uri ?? vscode.Uri.file('.'), '**/*');
+      const pattern = new vscode.RelativePattern(
+        vscode.workspace.workspaceFolders?.[0]?.uri ?? vscode.Uri.file("."),
+        "**/*"
+      );
       this.watcher = vscode.workspace.createFileSystemWatcher(pattern);
       const onChange = (u: vscode.Uri) => {
         const rp = toRelPath(u);
@@ -62,7 +74,7 @@ export class FilesService implements vscode.Disposable {
           const prev = this.index[idx]!;
           this.index[idx] = { ...prev, name, ext };
         } else {
-          this.index.push({ type: 'file', path: rp, name, ext });
+          this.index.push({ type: "file", path: rp, name, ext });
         }
       };
       this.watcher.onDidCreate(onChange);
@@ -73,34 +85,43 @@ export class FilesService implements vscode.Disposable {
         if (i >= 0) this.index.splice(i, 1);
       });
     } catch (e) {
-      this.logger?.warn?.('files watcher init failed', { error: e instanceof Error ? e.message : String(e) });
+      this.logger?.warn?.("files watcher init failed", {
+        error: e instanceof Error ? e.message : String(e),
+      });
     }
   }
 
   async refreshIndex(): Promise<void> {
     const t0 = Date.now();
     try {
-      const exclude = `{${DEFAULT_EXCLUDES.join(',')}}`;
+      const exclude = `{${DEFAULT_EXCLUDES.join(",")}}`;
       // Limit intentionally high; workspace.findFiles filters by glob efficiently
-      const uris = await vscode.workspace.findFiles('**/*', exclude, 50000);
+      const uris = await vscode.workspace.findFiles("**/*", exclude, 50000);
       const items: FileEntry[] = [];
       for (const u of uris) {
         const rp = toRelPath(u);
-        if (!rp || rp.endsWith('/')) continue;
+        if (!rp || rp.endsWith("/")) continue;
         const name = basename(rp);
         const ext = extname(rp);
-        items.push({ type: 'file', path: rp, name, ext });
+        items.push({ type: "file", path: rp, name, ext });
       }
       this.index = items;
       this.complete = true;
-      this.logger?.info?.('files index built', { count: items.length, ms: Date.now() - t0 });
+      this.logger?.info?.("files index built", {
+        count: items.length,
+        ms: Date.now() - t0,
+      });
     } catch (e) {
-      this.logger?.error?.('files index failed', { error: e instanceof Error ? e.message : String(e) });
+      this.logger?.error?.("files index failed", {
+        error: e instanceof Error ? e.message : String(e),
+      });
       this.complete = false;
     }
   }
 
-  summary() { return { indexed: this.index.length, complete: this.complete }; }
+  summary() {
+    return { indexed: this.index.length, complete: this.complete };
+  }
 
   indexSlice(limit = 200): FileEntry[] {
     return this.index.slice(0, Math.max(0, limit));
@@ -108,9 +129,10 @@ export class FilesService implements vscode.Disposable {
 
   // Simple fuzzy-ish scoring
   search(query: string, limit = 50): FileEntry[] {
-    const q = (query || '').toLowerCase();
+    const q = (query || "").toLowerCase();
     if (!q) return this.indexSlice(limit);
-    const scored = this.index.map((e) => ({ e, s: score(e, q) }))
+    const scored = this.index
+      .map((e) => ({ e, s: score(e, q) }))
       .filter((x) => x.s > 0)
       .sort((a, b) => b.s - a.s)
       .slice(0, limit)
@@ -119,22 +141,26 @@ export class FilesService implements vscode.Disposable {
   }
 
   listChildren(path: string, limit = 200): FileEntry[] {
-    if (!path || path.includes('..') || /^([a-zA-Z]:\\|\\\\|\/)/.test(path)) return [];
-    const norm = (path || '').replace(/^\/+|\/+$/g, '');
-    const prefix = norm ? norm + '/' : '';
+    if (!path || path.includes("..") || /^([a-zA-Z]:\\|\\\\|\/)/.test(path))
+      return [];
+    const norm = (path || "").replace(/^\/+|\/+$/g, "");
+    const prefix = norm ? norm + "/" : "";
     const seen = new Set<string>();
     const out: FileEntry[] = [];
     for (const e of this.index) {
       if (!e.path.startsWith(prefix)) continue;
       const rest = e.path.slice(prefix.length);
-      const slash = rest.indexOf('/');
+      const slash = rest.indexOf("/");
       if (slash === -1) {
-        if (!seen.has(e.path)) { out.push({ ...e }); seen.add(e.path); }
+        if (!seen.has(e.path)) {
+          out.push({ ...e });
+          seen.add(e.path);
+        }
       } else {
         const folder = rest.slice(0, slash);
         const p = prefix + folder;
         if (!seen.has(p)) {
-          out.push({ type: 'dir', path: p, name: folder, ext: '' });
+          out.push({ type: "dir", path: p, name: folder, ext: "" });
           seen.add(p);
         }
       }
@@ -142,14 +168,15 @@ export class FilesService implements vscode.Disposable {
     }
     // Sort: directories first, then files; alphabetical by name
     out.sort((a, b) => {
-      if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+      if (a.type !== b.type) return a.type === "dir" ? -1 : 1;
       return a.name.localeCompare(b.name);
     });
     return out.slice(0, limit);
   }
 
   async stat(path: string): Promise<FileEntry | null> {
-    if (!path || path.includes('..') || /^([a-zA-Z]:\\|\\\\|\/)/.test(path)) return null;
+    if (!path || path.includes("..") || /^([a-zA-Z]:\\|\\\\|\/)/.test(path))
+      return null;
     try {
       const folders = vscode.workspace.workspaceFolders || [];
       for (const wf of folders) {
@@ -158,7 +185,14 @@ export class FilesService implements vscode.Disposable {
           const st = await vscode.workspace.fs.stat(u);
           const name = basename(path);
           const ext = extname(path);
-          return { type: 'file', path, name, ext, size: st.size, mtime: st.mtime };
+          return {
+            type: "file",
+            path,
+            name,
+            ext,
+            size: st.size,
+            mtime: st.mtime,
+          };
         } catch {}
       }
     } catch {}
@@ -166,31 +200,41 @@ export class FilesService implements vscode.Disposable {
   }
 
   // Resolve dropped URIs/paths to workspace-relative entries (files or dirs)
-  async resolveDrop(inputs: string[], limit = 200): Promise<{ items: FileEntry[]; truncated: boolean; bad: string[] }>{
+  async resolveDrop(
+    inputs: string[],
+    limit = 200
+  ): Promise<{ items: FileEntry[]; truncated: boolean; bad: string[] }> {
     const items: FileEntry[] = [];
     const bad: string[] = [];
     const seen = new Set<string>();
-    const ALLOWED_SCHEMES = new Set(['file', 'vscode-remote', 'vscode-file']);
+    const ALLOWED_SCHEMES = new Set(["file", "vscode-remote", "vscode-file"]);
 
     const addUri = async (u0: vscode.Uri) => {
       try {
         let u = u0;
         if (!ALLOWED_SCHEMES.has(u.scheme)) return false;
         // Normalize vscode-file to file scheme using fsPath
-        if (u.scheme === 'vscode-file') {
+        if (u.scheme === "vscode-file") {
           u = vscode.Uri.file(u.fsPath);
         }
         const wf = vscode.workspace.getWorkspaceFolder(u);
         if (!wf) return false;
         const rel = toRelPath(u);
-        if (!rel || rel.includes('..')) return false;
+        if (!rel || rel.includes("..")) return false;
         if (seen.has(rel)) return true;
         const st = await vscode.workspace.fs.stat(u);
         const name = basename(rel);
         const ext = extname(rel);
-        const type: 'file' | 'dir' = (st.type & vscode.FileType.Directory) ? 'dir' : 'file';
-        const entry: FileEntry = { type, path: rel, name, ext, mtime: st.mtime };
-        if (type === 'file') (entry as any).size = st.size;
+        const type: "file" | "dir" =
+          st.type & vscode.FileType.Directory ? "dir" : "file";
+        const entry: FileEntry = {
+          type,
+          path: rel,
+          name,
+          ext,
+          mtime: st.mtime,
+        };
+        if (type === "file") (entry as any).size = st.size;
         items.push(entry);
         seen.add(rel);
         return true;
@@ -216,13 +260,16 @@ export class FilesService implements vscode.Disposable {
       if (!ok) bad.push(s);
       if (items.length >= limit) break;
     }
-    const truncated = items.length >= limit && (inputs?.length ?? 0) > items.length;
+    const truncated =
+      items.length >= limit && (inputs?.length ?? 0) > items.length;
     return { items, truncated, bad };
   }
 
   dispose(): void {
     this.disposed = true;
-    try { this.watcher?.dispose(); } catch {}
+    try {
+      this.watcher?.dispose();
+    } catch {}
     this.watcher = null;
   }
 }
@@ -234,7 +281,7 @@ function score(e: FileEntry, q: string): number {
   if (name === q) s += 100;
   if (name.includes(q)) s += 50;
   if (path.includes(q)) s += 10;
-  if (e.ext && q.startsWith('.') && e.ext === q) s += 20;
+  if (e.ext && q.startsWith(".") && e.ext === q) s += 20;
   // shorter names slightly preferred
   s += Math.max(0, 5 - Math.floor(name.length / 10));
   return s;
