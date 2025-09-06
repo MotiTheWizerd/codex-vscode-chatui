@@ -22,13 +22,28 @@ Creates a new CoreManager instance with the VS Code extension context and option
 
 ## Properties
 
-- `eventBusInstance`: The event bus for pub/sub communication
-- `config`: The configuration service for managing settings
-- `policies`: The policy guard for permissions and rate limiting
-- `session`: The session store for managing user sessions (nullable)
-- `tools`: The tool bus for managing tools (nullable)
-- `codex`: The Codex client for API communication (nullable)
-- `diContainer`: The dependency injection container for service management
+- `eventBusInstance`: The event bus for pub/sub communication (getter)
+- `config`: The configuration service for managing settings (getter)
+- `policies`: The policy guard for permissions and rate limiting (getter)
+- `session`: The session store for managing user sessions (nullable, getter)
+- `tools`: The tool bus for managing tools (nullable, getter)
+- `codex`: The Codex client for API communication (nullable, getter)
+- `filesService`: The files service for file indexing and search (nullable, getter)
+- `diContainer`: The dependency injection container for service management (getter)
+- `sessionStore`: Direct access to the session store instance (private)
+- `toolBus`: Direct access to the tool bus instance (private)
+- `client`: Direct access to the Codex client instance (private)
+- `files`: Direct access to the files service instance (private)
+- `initialized`: Boolean flag indicating if the manager has been initialized (private)
+- `disposed`: Boolean flag indicating if the manager has been disposed (private)
+- `context`: The VS Code extension context (readonly)
+- `logger`: The logger instance (readonly)
+
+## Private Properties
+
+- `onUiSendWrapped`: Event handler wrapper for UI send events (nullable)
+- `onToolInvokeWrapped`: Event handler wrapper for tool invoke events (nullable)
+- `disposables`: Array of disposables tracked by the CoreManager
 
 ## Methods
 
@@ -38,11 +53,12 @@ Initialize all core services:
 1. Load configuration
 2. Initialize the dependency injection container
 3. Register all core services with the container
-4. Instantiate additional services (SessionStore, ToolBus, CodexClient)
-e5. Initialize policy guard
+4. Instantiate additional services (SessionStore, ToolBus, CodexClient, FilesService)
+5. Initialize policy guard
 6. Register event handlers for runtime flows
-7. Check for session restoration
-8. Publish "core:ready" event
+7. Start file indexing
+8. Check for session restoration
+9. Publish "core:ready" event
 
 This method is idempotent - calling it multiple times will only initialize once.
 
@@ -70,6 +86,10 @@ Get the tool bus instance, or null if not initialized.
 
 Get the Codex client instance, or null if not initialized.
 
+### filesService(): FilesService | null
+
+Get the files service instance, or null if not initialized.
+
 ### diContainer(): DIContainer
 
 Get the dependency injection container instance.
@@ -81,7 +101,8 @@ Perform cleanup operations when the extension is shutting down:
 2. Unsubscribe event handlers
 3. Dispose all tracked disposables
 4. Shutdown policy guard and session store
-5. Reset initialization flags
+5. Dispose event bus
+6. Reset initialization flags
 
 ### dispose(): void
 
@@ -91,6 +112,28 @@ Implementation of VS Code's Disposable interface. Calls shutdown() asynchronousl
 
 - `getOrCreateSession`: Ensures a current session exists and returns it.
 - `getCurrentSession`: Returns the current session or null.
+
+## Private Methods
+
+### registerEventHandlers()
+
+Registers event handlers for UI send and tool invoke events.
+
+### trackDisposable(d?: vscode.Disposable)
+
+Tracks a disposable object by adding it to both the disposables array and the extension context subscriptions.
+
+### logInfo(msg: string, meta?: Record<string, unknown>)
+
+Logs an info message using the provided logger.
+
+### logError(msg: string, err: unknown)
+
+Logs an error message using the provided logger.
+
+### logWarn(msg: string, meta?: Record<string, unknown>)
+
+Logs a warning message using the provided logger.
 
 ## Usage
 
@@ -122,6 +165,7 @@ During initialization, the CoreManager registers the following services with the
 - `sessionStore`: The SessionStore instance (if initialized)
 - `toolBus`: The ToolBus instance (if initialized)
 - `codexClient`: The CodexClient instance (if initialized)
+- `filesService`: The FilesService instance (if initialized)
 
 ## Design Principles
 
@@ -376,6 +420,17 @@ core.eventBusInstance.subscribe(Events.SessionRestored, (payload) => {
 });
 ```
 
+## Modular Implementation
+
+Note: There is also a modular implementation of the CoreManager in `src/core/CoreManager/` that splits the functionality into separate modules:
+- `EventHandler` - Handles event registration and processing
+- `Helpers` - Provides utility functions
+- `InitializationManager` - Manages the initialization process
+- `SessionManager` - Manages session operations
+- `ShutdownManager` - Manages the shutdown process
+
+This modular implementation is not currently used but is available for future refactoring.
+
 ## Source
 
 - `src/core/manager.ts:1`
@@ -389,4 +444,5 @@ core.eventBusInstance.subscribe(Events.SessionRestored, (payload) => {
 - State: `docs/state/session-store.md`
 - Telemetry: `docs/telemetry/logger.md`, `docs/telemetry/reporter.md`
 - Core: `docs/core/event-bus.md`, `docs/core/policy.md`, `docs/core/di.md`, `docs/core/errors.md`
+- Files: `docs/files/service.md`
 - Activation: `docs/ext/extension.md`
