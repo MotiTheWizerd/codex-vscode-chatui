@@ -23,6 +23,8 @@ Status: Implemented (sole UI)
 ## Implementation
 
 - Panel class: `src/ui/chat-webview.ts`
+- HTML builder: `src/ui/chatHtml.ts` (orchestrates utilities)
+- Utilities: `src/ui/chat-html-utilities/*` (assets, fragments, template, security, dist-scripts)
 - Panel manager: `src/ui/chat-panel-manager.ts` (singleton panel lifecycle)
 - Activation wiring: `src/core/bootstrap.ts` registers commands and creates status bar item
 - Status bar menu: `src/ext/registrations/commands.ts` and `src/ui/statusbar/logs-button.ts`
@@ -63,6 +65,7 @@ Assets live under `media/chat/` and compiled scripts under `dist/ui/`:
 - `dist/ui/controllers.js` - Controllers (global `window.MessageListController`, `window.ComposerController`)
 - `dist/ui/renderer.js` - Renderer (global `window.Renderer`)
 - `dist/ui/bootstrap.js` - Bootstrap logic (no globals)
+- `dist/ui/composer-bootstrap.js` - Composer initialization (module entry)
 
 ## Development Workflow
 
