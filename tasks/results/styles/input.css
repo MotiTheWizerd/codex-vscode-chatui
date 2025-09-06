@@ -13,7 +13,7 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #cccccc;
+  color: transparent;
 }
 
 .context-icon {
@@ -38,8 +38,8 @@
 .agent-dropdown {
   background: #3c3c3c;
   border: 1px solid #404040;
-  border-radius: 4px;
-  color: #cccccc;
+  border-radius: 1px;
+  color: transparent;
   padding: 4px 8px;
   font-size: 12px;
   outline: none;

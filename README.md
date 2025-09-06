@@ -1,4 +1,4 @@
-# Codex Chat Extension
+# CODΞX-Q Extension
 
 AI chat extension for VS Code powered by Codex.
 

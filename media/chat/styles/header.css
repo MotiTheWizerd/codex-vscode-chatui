@@ -1,0 +1,33 @@
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #404040;
+  background: #1e1e1e;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.chat-header .title {
+  font-weight: 600;
+}
+
+.chat-header .spacer {
+  flex: 1;
+}
+
+.chat-header .header-btn {
+  background: #2d2d30;
+  border: 1px solid #404040;
+  color: #cccccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.chat-header .header-btn:hover {
+  background: #3c3c3c;
+}
+

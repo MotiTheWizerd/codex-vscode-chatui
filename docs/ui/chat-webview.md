@@ -2,11 +2,11 @@
 
 ## Overview
 
-The chat webview module provides the user interface for Codex chat as a dedicated `WebviewPanel`. It builds the panel HTML from a template and dynamically loads styles, scripts, and HTML fragments. The module handles asset loading, CSP security, and development-time auto-refresh.
+Legacy: previously hosted the chat UI as a dedicated `WebviewPanel` in the editor. The Sidebar implementation now uses a `WebviewView` (`codex.chatView`) for better UX and persistence. The HTML builder has been extracted to `src/ui/chatHtml.ts` and reused by the Sidebar view.
 
 ## Implementation Status
 
-Implemented and used as the sole UI for chat.
+Legacy/kept for reference during transition; Sidebar view is the default host.
 
 ## Key Files
 

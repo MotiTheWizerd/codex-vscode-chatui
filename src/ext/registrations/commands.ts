@@ -1,39 +1,37 @@
 import * as vscode from "vscode";
 import { log as logger } from "@/telemetry/log";
 import { CoreManager } from "@/core/manager";
-import { ChatPanelManager } from "@/ui/chat-panel-manager";
+// Legacy panel manager retained but not used; we focus sidebar view instead
 
 export function registerCoreCommands(
   context: vscode.ExtensionContext,
   core: CoreManager
 ): vscode.Disposable[] {
-  const showMenu = vscode.commands.registerCommand("codex.showMenu", async () => {
+  const showMenu = vscode.commands.registerCommand("codexq.showMenu", async () => {
     const picks: Array<vscode.QuickPickItem & { id: string }> = [
-      { id: "chat", label: "$(comment-discussion) Open Codex Chat" },
-      { id: "logs", label: "$(output) Open Codex Logs" },
+      { id: "chat", label: "$(comment-discussion) Open Codex Q Chat" },
+      { id: "logs", label: "$(output) Open Codex Q Logs" },
     ];
     const choice = await vscode.window.showQuickPick(picks, {
-      placeHolder: "Codex",
+      placeHolder: "Codex Q",
       ignoreFocusOut: true,
       matchOnDetail: true,
     });
     if (!choice) return;
     if (choice.id === "chat") {
-      vscode.commands.executeCommand("codex.openChatPanel");
+      vscode.commands.executeCommand("codexq.openChatPanel");
     } else if (choice.id === "logs") {
       logger.show();
     }
   });
 
-  const showLogs = vscode.commands.registerCommand("codex.showLogs", () => {
+  const showLogs = vscode.commands.registerCommand("codexq.showLogs", () => {
     logger.show();
   });
 
   const openChatPanel = vscode.commands.registerCommand(
-    "codex.openChatPanel",
-    () => {
-      ChatPanelManager.open(context, core);
-    }
+    "codexq.openChatPanel",
+    () => vscode.commands.executeCommand("codexq.chat.focus")
   );
 
   return [showMenu, showLogs, openChatPanel];

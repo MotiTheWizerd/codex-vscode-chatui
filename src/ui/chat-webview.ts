@@ -16,8 +16,8 @@ export class ChatWebview implements vscode.Disposable {
   ) {
     // create the panel
     this.panel = vscode.window.createWebviewPanel(
-      "codex.chat",
-      "Codex Chat",
+      "codexq.chat",
+      "Codex Q Chat",
       vscode.ViewColumn.Beside,
       {
         enableScripts: true,

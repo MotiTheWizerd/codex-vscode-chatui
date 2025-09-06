@@ -206,8 +206,41 @@ export class FileMentionsController implements Disposable {
     const ctxText = this.getBeforeCaretText();
     const q = this.extractQuery(ctxText);
     const base = FileMentionsController.MOCK_FILES;
-    const list = q ? base.filter((p) => p.toLowerCase().includes(q)) : base.slice();
-    this.items = list.map((p) => ({ path: p, type: 'file' }));
+    let list = q ? base.filter((p) => p.toLowerCase().includes(q)) : base.slice();
+    
+    // Convert to items with proper type detection
+    const items: Array<{ path: string; type: 'file' | 'dir' }> = [];
+    const seen = new Set<string>();
+    
+    // Add files
+    for (const path of list) {
+      if (!seen.has(path)) {
+        items.push({ path, type: 'file' });
+        seen.add(path);
+      }
+    }
+    
+    // Add parent directories (if not already in the list)
+    if (!q) { // Only add directories when there's no query
+      for (const path of list) {
+        const parts = path.split('/').filter(Boolean);
+        for (let i = 1; i < parts.length; i++) {
+          const dirPath = parts.slice(0, i).join('/');
+          if (!seen.has(dirPath)) {
+            items.push({ path: dirPath, type: 'dir' });
+            seen.add(dirPath);
+          }
+        }
+      }
+    }
+    
+    // Sort: directories first, then files; alphabetical by name
+    items.sort((a, b) => {
+      if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+      return this.basename(a.path).localeCompare(this.basename(b.path));
+    });
+    
+    this.items = items;
     this.activeIndex = 0;
     this.renderPopup();
   }

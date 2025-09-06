@@ -24,10 +24,13 @@ function start() {
 
   const bridge = Bridge;
   const renderer = new RendererCtor();
+  // minimal debug for handshake
+  try { console.info('[codex-ui] bootstrap: starting'); } catch {}
 
   function onLoad() {
     try {
       renderer.mountAll(document);
+      try { console.info('[codex-ui] posting ui.ready'); } catch {}
       bridge.post('ui.ready', { schemaVersion: 1 });
     } catch (e) {
       console.error('Codex UI bootstrap onLoad error', e);
@@ -42,6 +45,7 @@ function start() {
 
   bridge.on((msg: any) => {
     if (!msg || !msg.type) return;
+    try { console.info('[codex-ui] recv from ext', msg.type); } catch {}
     if (msg.type === 'init') {
       const messages = (msg.payload && msg.payload.session && Array.isArray(msg.payload.session.messages))
         ? msg.payload.session.messages

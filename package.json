@@ -1,6 +1,6 @@
 {
   "name": "codex-vs-ext",
-  "displayName": "Codex Chat",
+  "displayName": "CODΞX-Q",
   "description": "AI chat extension for VS Code powered by Codex",
   "version": "0.0.1",
   "engines": {
@@ -11,26 +11,52 @@
   ],
   "main": "./dist/ext/extension.js",
   "type": "module",
-  "publisher": "codex",
+  "publisher": "codexq",
   "activationEvents": [
     "onStartupFinished",
-    "onCommand:codex.openChatPanel"
+    "onCommand:codexq.openChatPanel",
+    "onView:codexq.chatView",
+    "onCommand:codexq.chat.focus"
   ],
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "codexq",
+          "title": "Codex Q",
+          "icon": "media/codexq-activitybar.svg"
+        }
+      ]
+    },
+    "views": {
+      "codexq": [
+        {
+          "type": "webview",
+          "id": "codexq.chatView",
+          "name": "Chat",
+          "contextualTitle": "Codex Q Chat",
+          "visibility": "visible"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "codex.openChatPanel",
-        "title": "Codex: Open Chat"
+        "command": "codexq.openChatPanel",
+        "title": "CODΞX-Q"
       },
       {
-        "command": "codex.showMenu",
-        "title": "Codex: Menu",
-        "category": "Codex"
+        "command": "codexq.chat.focus",
+        "title": "CODΞX-Q: Focus Chat"
       },
       {
-        "command": "codex.showLogs",
-        "title": "Codex: Show Logs",
-        "category": "Codex"
+        "command": "codexq.showMenu",
+        "title": "CCODΞX-Q: Menu",
+        "category": "Codex Q"
+      },
+      {
+        "command": "codexq.showLogs",
+        "title": "CODΞX-Q: Show Logs",
+        "category": "Codex Q"
       }
     ]
   },

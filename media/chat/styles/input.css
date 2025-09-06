@@ -1,15 +1,11 @@
 .input-container {
-  background: #2d2d30;
+  background: transparent;
   border-top: 1px solid #404040;
   padding: 16px;
   flex-shrink: 0;
 }
-.input-container {
-  background: #252526 !important;
-  color: red !important;
-}
 .context-bar {
-  background: #252526;
+  background: transparent;
   border-radius: 8px;
   padding: 8px 12px;
   margin-bottom: 12px;
@@ -28,11 +24,12 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  margin: 8px 2px;
 }
 
 .agent-label {
-  font-size: 12px;
+  font-size: 10px;
   color: #cccccc;
   display: flex;
   align-items: center;
@@ -40,12 +37,12 @@
 }
 
 .agent-dropdown {
-  background: #3c3c3c;
+  background: transparent;
   border: 1px solid #404040;
   border-radius: 4px;
   color: #cccccc;
-  padding: 4px 8px;
-  font-size: 12px;
+  padding: 3px 3px;
+  font-size: 10px;
   outline: none;
 }
 
@@ -65,25 +62,11 @@
 }
 
 .input-wrapper:focus-within {
-  border-color: #ffd700;
+  border-color: #404040;
 }
 .input-wrapper .composer-editor {
   border: none !important;
   outline: none;
-}
-.input-wrapper #composer-root {
-  flex: 1;
-  padding: 10px;
-  background: transparent;
-  border: none;
-  color: #cccccc;
-  outline: none !important;
-  font-size: 14px;
-  font-family: inherit;
-  resize: none;
-  min-height: 20px;
-  max-height: 120px;
-  line-height: 1.4;
 }
 #composer-root {
   outline: none !important;
@@ -93,6 +76,10 @@
 }
 
 .input-actions {
+  position: absolute;
+
+  bottom: 8px;
+  right: 8px;
   display: flex;
   align-items: center;
   gap: 8px;

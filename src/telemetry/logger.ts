@@ -14,7 +14,7 @@ export interface LogEntry {
 export class Logger {
   private outputChannel: vscode.OutputChannel;
   constructor() {
-    this.outputChannel = vscode.window.createOutputChannel("Codex");
+    this.outputChannel = vscode.window.createOutputChannel("Codex Q");
   }
 
   // Log a debug message

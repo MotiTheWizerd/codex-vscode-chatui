@@ -13,6 +13,7 @@ This module is partially implemented. It provides basic extension activation and
 - Extension activation
 - Command registration
 - Basic coordination of core services
+- Sidebar View registration for Chat (`codex.chatView`)
 
 ## Planned Features
 
@@ -20,6 +21,12 @@ This module is partially implemented. It provides basic extension activation and
 - Event handling for VS Code lifecycle events
 - Better integration with all other modules
 - Improved error handling and recovery
+
+## Sidebar Chat View
+
+- View Container: `codex` (Activity Bar icon)
+- View: `codex.chatView` (WebviewView)
+- Focus Command: `codex.chat.focus` (alias to `workbench.view.showView` for the view id)
 
 ## Design Principles
 

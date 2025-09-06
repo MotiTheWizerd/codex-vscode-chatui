@@ -1,30 +1,6 @@
-<div class="context-bar">
-  <span class="context-icon">@</span>
-  <span>Add Context</span>
-  <span style="margin-left: auto; color: #808080"
-    >Plan, search, build anything</span
-  >
-</div>
-
-<div class="agent-selector">
-  <div class="agent-label">
-    <span>🤖</span>
-    Agent
-  </div>
-  <select class="agent-dropdown" id="agentSelect">
-    <option value="auto">Auto</option>
-    <option value="coding">Coding</option>
-    <option value="search">Search</option>
-    <option value="planning">Planning</option>
-  </select>
-</div>
-
 <div class="input-wrapper">
   <div id="composer-root" class="composer-root" data-role="composer"></div>
   <div class="input-actions">
-    <button class="action-button" id="attachButton" title="Attach file">
-      📎
-    </button>
     <button
       class="action-button send-button"
       id="sendButton"
@@ -35,4 +11,17 @@
     </button>
   </div>
 </div>
-<div class="shortcut-hint">Ctrl+Enter to send • Ctrl+I to focus</div>
+<div>
+  <div class="agent-selector">
+    <div class="agent-label">
+      <div>Agent</div>
+      <select class="agent-dropdown" id="agentSelect">
+        <option value="auto">Auto</option>
+        <option value="coding">Coding</option>
+        <option value="search">Search</option>
+        <option value="planning">Planning</option>
+      </select>
+    </div>
+  </div>
+  <div class="shortcut-hint">Ctrl+Enter to send • Ctrl+I to focus</div>
+</div>

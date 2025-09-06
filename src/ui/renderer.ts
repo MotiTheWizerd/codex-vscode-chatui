@@ -81,7 +81,6 @@ class Renderer {
     if (e.type === 'user.send') {
       this.messages.push({ id: randomId(), role: 'user', text: e.text });
       this.registry.update('messageList', { items: this.messages });
-      window.CodexBridge?.post('chat.userMessage', { text: e.text });
       return;
     }
   }
