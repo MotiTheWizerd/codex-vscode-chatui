@@ -1,0 +1,20 @@
+// src/files/excludes.ts
+export const DEFAULT_EXCLUDES = [
+  "**/.git/**",
+  "**/node_modules/**",
+  "**/dist/**",
+  "**/out/**",
+  "**/coverage/**",
+  "**/*.map",
+  "**/*.min.*",
+  "**/*.png",
+  "**/*.jpg",
+  "**/*.jpeg",
+  "**/*.gif",
+  "**/*.zip",
+  "**/*.exe",
+  "**/*.dll",
+  "**/*.pdf",
+  "**/*.mp4",
+  "**/*.mov",
+];
