@@ -54,3 +54,15 @@ The mentions feature is implemented in the `FileMentionsController` class locate
 - Uses deterministic mock data instead of actual workspace files
 - No file content loading or processing
 - Basic file search functionality
+
+## Folders First Behavior
+
+- Results are always sorted with directories first, then files (alphabetical by basename).
+- In local fallback mode (no bridge), parent directories of matched files are included even when a query is present.
+- In bridge mode, the extension’s FilesService returns directories for `files/listChildren` and results are defensively re‑sorted in the webview to keep folders first.
+
+## Troubleshooting
+
+- Verify the bridge is active: open the Webview Developer Tools and look for logs like `mentions: bridge available = true` and `mentions: bridge result`.
+- If you see `mentions: no bridge, using local fallback`, the UI is using mock data; confirm `dist/ui/bridge.js` is injected and that `window.CodexBridge` exists before the composer mounts.
+- When typing `@` (or `@ `), you should see top‑level folders first. With any query (e.g., `@comp`), parent folders of matched files are still included.

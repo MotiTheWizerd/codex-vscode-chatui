@@ -63,6 +63,7 @@ export class FileMentionsController implements Disposable {
 
     // Bridge
     this.bridge = (window as any).CodexBridge ?? null;
+    try { console.debug?.('mentions: bridge available =', !!this.bridge); } catch {}
     if (this.bridge?.on) {
       this.unsub = this.bridge.on((msg: any) => this.onBridge(msg));
     }
@@ -221,15 +222,17 @@ export class FileMentionsController implements Disposable {
     }
     
     // Add parent directories (if not already in the list)
-    if (!q) { // Only add directories when there's no query
-      for (const path of list) {
-        const parts = path.split('/').filter(Boolean);
-        for (let i = 1; i < parts.length; i++) {
-          const dirPath = parts.slice(0, i).join('/');
-          if (!seen.has(dirPath)) {
+    for (const path of list) {
+      const parts = path.split('/').filter(Boolean);
+      for (let i = 1; i < parts.length; i++) {
+        const dirPath = parts.slice(0, i).join('/');
+        if (!seen.has(dirPath)) {
+          // If a query exists, only include directories whose basename includes the query
+          const dirName = parts[i - 1] || '';
+          if (!q || dirName.toLowerCase().includes(q)) {
             items.push({ path: dirPath, type: 'dir' });
-            seen.add(dirPath);
           }
+          seen.add(dirPath);
         }
       }
     }
@@ -246,7 +249,10 @@ export class FileMentionsController implements Disposable {
   }
 
   private scheduleQuery() {
-    if (!this.bridge) return this.filterItemsLocal();
+    if (!this.bridge) {
+      try { console.debug?.('mentions: no bridge, using local fallback'); } catch {}
+      return this.filterItemsLocal();
+    }
     if (this.debounceTimer) window.clearTimeout(this.debounceTimer);
     this.debounceTimer = window.setTimeout(() => this.queryNow(), 200);
   }
@@ -255,8 +261,10 @@ export class FileMentionsController implements Disposable {
     const ctxText = this.getBeforeCaretText();
     const q = this.extractQuery(ctxText);
     if (!q) {
+      try { console.debug?.('mentions: query=listChildren', { path: '' }); } catch {}
       this.request('files/listChildren', { path: '', limit: 200 });
     } else {
+      try { console.debug?.('mentions: query=search', { q }); } catch {}
       this.request('files/search', { q, limit: 50 });
     }
   }
@@ -288,6 +296,19 @@ export class FileMentionsController implements Disposable {
     if (this.lastReqId && msg.reqId && msg.reqId !== this.lastReqId) return; // stale
     const items = Array.isArray(msg.items) ? msg.items as Array<{ path: string; type?: 'file' | 'dir' }> : [];
     const next = items.filter((it) => !!it && !!it.path);
+    // Defensive sort to ensure folders first even if provider forgets
+    next.sort((a, b) => {
+      const at = (a.type ?? 'file');
+      const bt = (b.type ?? 'file');
+      if (at !== bt) return at === 'dir' ? -1 : 1;
+      const an = this.basename(a.path);
+      const bn = this.basename(b.path);
+      return an.localeCompare(bn);
+    });
+    try {
+      const dirCount = next.filter((x) => (x.type ?? 'file') === 'dir').length;
+      console.debug?.('mentions: bridge result', { count: next.length, dirs: dirCount, op });
+    } catch {}
     // Preserve selection if possible
     const prevActive = this.activeIndex;
     this.items = next;
@@ -308,10 +329,13 @@ export class FileMentionsController implements Disposable {
       const icon = doc.createElement('span');
       icon.className = 'mentions-icon';
       icon.textContent = entry.type === 'dir' ? '📁' : '📄';
-      const text = doc.createElement('span');
-      text.className = 'mentions-path';
-      text.textContent = this.basename(entry.path);
-      row.append(icon, text);
+      const name = doc.createElement('span');
+      name.className = 'mentions-name';
+      const dir = doc.createElement('span');
+      dir.className = 'mentions-dir';
+      name.textContent = this.basename(entry.path);
+      dir.textContent = this.dirname(entry.path);
+      row.append(icon, name, dir);
       row.addEventListener('mousedown', (ev) => { ev.preventDefault(); });
       row.addEventListener('click', () => this.insertChip(entry.path));
       row.addEventListener('mouseenter', () => {
@@ -340,8 +364,11 @@ export class FileMentionsController implements Disposable {
     if (!sel || sel.rangeCount === 0) return;
     const range = sel.getRangeAt(0);
 
+    // Determine type for icon (fallback to file)
+    const cur = this.items.find((it) => it.path === path);
+    const isDir = cur?.type === 'dir';
     // Build chip and trailing space
-    const chip = this.createChip(this.input.ownerDocument, path);
+    const chip = this.createChip(this.input.ownerDocument, path, isDir);
     // Insert chip at caret
     range.insertNode(chip);
     // Remove the original @mention token immediately before the chip
@@ -470,7 +497,7 @@ export class FileMentionsController implements Disposable {
   private windowDragOverHandler: ((e: DragEvent) => void) | null = null;
   private windowDropHandler: ((e: DragEvent) => void) | null = null;
 
-  private createChip(doc: Document, path: string): HTMLElement {
+  private createChip(doc: Document, path: string, isDir: boolean = false): HTMLElement {
     const el = doc.createElement('span');
     el.className = 'mention-chip';
     el.setAttribute('data-path', path);
@@ -479,7 +506,7 @@ export class FileMentionsController implements Disposable {
 
     const icon = doc.createElement('span');
     icon.className = 'mention-chip-icon';
-    icon.textContent = '📄';
+    icon.textContent = isDir ? '📁' : '📄';
     const text = doc.createElement('span');
     text.className = 'mention-chip-text';
     text.textContent = this.basename(path);
@@ -600,5 +627,12 @@ export class FileMentionsController implements Disposable {
     const parts = p.split('/').filter(Boolean);
     if (!parts.length) return p;
     return parts[parts.length - 1] ?? p;
+  }
+
+  private dirname(p: string): string {
+    if (!p) return '';
+    const parts = p.split('/').filter(Boolean);
+    if (parts.length <= 1) return '';
+    return parts.slice(0, parts.length - 1).join('/');
   }
 }

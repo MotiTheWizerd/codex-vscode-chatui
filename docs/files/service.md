@@ -30,3 +30,4 @@ Notes
 
 - Default ignore set is built‑in; .gitignore support can be added later via pattern parsing.
 - Paths are workspace‑relative with forward slashes.
+- `search(q, limit)` returns matching files and also includes parent directories of those matches. Results are sorted with directories first, then files (alphabetical by name).

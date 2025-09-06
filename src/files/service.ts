@@ -131,17 +131,42 @@ export class FilesService implements vscode.Disposable {
   search(query: string, limit = 50): FileEntry[] {
     const q = (query || "").toLowerCase();
     if (!q) return this.indexSlice(limit);
-    const scored = this.index
+    // score files by query
+    const scoredFiles = this.index
       .map((e) => ({ e, s: score(e, q) }))
       .filter((x) => x.s > 0)
       .sort((a, b) => b.s - a.s)
-      .slice(0, limit)
-      .map((x) => ({ ...x.e, score: x.s }));
-    return scored;
+      .slice(0, Math.max(1, limit))
+      .map((x) => ({ ...x.e, score: x.s } as FileEntry & { score?: number }));
+
+    // derive parent directories from matched files
+    const seen = new Set<string>();
+    const dirEntries: FileEntry[] = [];
+    for (const f of scoredFiles) {
+      const parts = f.path.split('/').filter(Boolean);
+      for (let i = 1; i < parts.length; i++) {
+        const p = parts.slice(0, i).join('/');
+        if (!seen.has(p)) {
+          dirEntries.push({ type: 'dir', path: p, name: parts[i - 1]!, ext: '' });
+          seen.add(p);
+        }
+      }
+    }
+    // If a query is present, only surface directories whose name contains the query
+    const filteredDirs = dirEntries.filter((d) => d.name.toLowerCase().includes(q));
+
+    // combine and sort: dirs first, then files (alpha by name)
+    const combined = [...filteredDirs, ...scoredFiles.map(({ score, ...rest }) => rest)];
+    combined.sort((a, b) => {
+      if (a.type !== b.type) return a.type === 'dir' ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+    return combined.slice(0, limit);
   }
 
   listChildren(path: string, limit = 200): FileEntry[] {
-    if (!path || path.includes("..") || /^([a-zA-Z]:\\|\\\\|\/)/.test(path))
+    // Allow empty string to list root; only reject null/undefined, parent traversal, or absolute-like inputs
+    if (path == null || path.includes("..") || /^([a-zA-Z]:\\|\\\\|\/)/.test(path))
       return [];
     const norm = (path || "").replace(/^\/+|\/+$/g, "");
     const prefix = norm ? norm + "/" : "";
@@ -280,7 +305,8 @@ function score(e: FileEntry, q: string): number {
   let s = 0;
   if (name === q) s += 100;
   if (name.includes(q)) s += 50;
-  if (path.includes(q)) s += 10;
+  // Only consider filename for matches; ignore path segments for files
+  // (Directories are derived separately in search and filtered by name.)
   if (e.ext && q.startsWith(".") && e.ext === q) s += 20;
   // shorter names slightly preferred
   s += Math.max(0, 5 - Math.floor(name.length / 10));

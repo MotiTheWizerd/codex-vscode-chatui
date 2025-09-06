@@ -144,7 +144,7 @@
     },
     {
       "path": "src/ui/chat-webview.ts",
-      "size": 20500,
+      "size": 20503,
       "language": "typescript",
       "key_sections": [
         {
