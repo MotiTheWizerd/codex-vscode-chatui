@@ -40,7 +40,9 @@ export class ChatWebview implements vscode.Disposable {
         if (type === "ui.ready") {
           const di = this.core.diContainer;
           const sessionStore = di.has("sessionStore")
-            ? di.resolve<import("@/state/session-store").SessionStore>("sessionStore")
+            ? di.resolve<import("@/state/session-store").SessionStore>(
+                "sessionStore"
+              )
             : null;
           const config = this.core.config.getAll();
           const features = this.core.config.getFeatures();
@@ -72,64 +74,175 @@ export class ChatWebview implements vscode.Disposable {
         // User sent a message from UI → persist; transport may start separately
         if (type === "chat.userMessage") {
           const text: string | undefined = msg?.payload?.text ?? msg?.text;
-          const attachments: unknown[] | undefined = msg?.payload?.attachments ?? msg?.attachments;
-          const embeddedFiles: string[] | undefined = msg?.payload?.embeddedFiles ?? msg?.embeddedFiles;
+          const attachments: unknown[] | undefined =
+            msg?.payload?.attachments ?? msg?.attachments;
+          const embeddedFiles: string[] | undefined =
+            msg?.payload?.embeddedFiles ?? msg?.embeddedFiles;
           const hasText = !!(text && text.trim());
-          const hasAttachments = Array.isArray(attachments) && attachments.length > 0;
-          const hasEmbedded = Array.isArray(embeddedFiles) && embeddedFiles.length > 0;
+          const hasAttachments =
+            Array.isArray(attachments) && attachments.length > 0;
+          const hasEmbedded =
+            Array.isArray(embeddedFiles) && embeddedFiles.length > 0;
           if (!hasText && !hasAttachments && !hasEmbedded) return;
           // Forward to EventBus; CoreManager handles policies, persistence, and transport
           const streaming = this.core.config.getFeatures().streaming;
           const options: Record<string, unknown> = {};
-          if (hasAttachments) options['attachments'] = attachments;
-          if (hasEmbedded) options['embeddedFiles'] = embeddedFiles;
-          this.core.eventBusInstance.publish(Events.UiSend, { text: text ?? "", streaming, options: Object.keys(options).length ? options : undefined });
+          if (hasAttachments) options["attachments"] = attachments;
+          if (hasEmbedded) options["embeddedFiles"] = embeddedFiles;
+          this.core.eventBusInstance.publish(Events.UiSend, {
+            text: text ?? "",
+            streaming,
+            options: Object.keys(options).length ? options : undefined,
+          });
           return;
         }
 
         // Files bridge: index/search/listChildren/stat
-        if (type === 'files/index' || type === 'files/search' || type === 'files/listChildren' || type === 'files/stat' || type === 'files/resolveDrop') {
+        if (
+          type === "files/index" ||
+          type === "files/search" ||
+          type === "files/listChildren" ||
+          type === "files/stat" ||
+          type === "files/resolveDrop"
+        ) {
           const reqId: string | undefined = msg?.payload?.reqId ?? msg?.reqId;
           const limit: number | undefined = msg?.payload?.limit ?? msg?.limit;
           const q: string | undefined = msg?.payload?.q ?? msg?.q;
           const path: string | undefined = msg?.payload?.path ?? msg?.path;
-          const dropped: string[] | undefined = msg?.payload?.items ?? msg?.items;
+          const dropped: string[] | undefined =
+            msg?.payload?.items ?? msg?.items;
           const files = this.core.filesService;
           const t0 = Date.now();
           if (!files) {
-            this.panel.webview.postMessage({ type: 'files/result', op: 'search', items: [], cursor: null, meta: { indexed: 0, complete: false, took_ms: Date.now() - t0, warnings: ['FilesService not available'] }, reqId });
+            this.panel.webview.postMessage({
+              type: "files/result",
+              op: "search",
+              items: [],
+              cursor: null,
+              meta: {
+                indexed: 0,
+                complete: false,
+                took_ms: Date.now() - t0,
+                warnings: ["FilesService not available"],
+              },
+              reqId,
+            });
             return;
           }
           try {
-            if (type === 'files/index') {
-              const items = files.indexSlice(Math.max(1, Math.min(500, limit ?? 200)));
+            if (type === "files/index") {
+              const items = files.indexSlice(
+                Math.max(1, Math.min(500, limit ?? 200))
+              );
               const sum = files.summary();
-              this.panel.webview.postMessage({ type: 'files/result', op: 'index', items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [] }, reqId });
-            } else if (type === 'files/search') {
-              const items = files.search(q ?? '', Math.max(1, Math.min(200, limit ?? 50)));
+              this.panel.webview.postMessage({
+                type: "files/result",
+                op: "index",
+                items,
+                cursor: null,
+                meta: {
+                  indexed: sum.indexed,
+                  complete: sum.complete,
+                  took_ms: Date.now() - t0,
+                  warnings: [],
+                },
+                reqId,
+              });
+            } else if (type === "files/search") {
+              const items = files.search(
+                q ?? "",
+                Math.max(1, Math.min(200, limit ?? 50))
+              );
               const sum = files.summary();
-              this.panel.webview.postMessage({ type: 'files/result', op: 'search', items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [] }, reqId });
-            } else if (type === 'files/listChildren') {
-              const items = files.listChildren(path ?? '', Math.max(1, Math.min(500, limit ?? 200)));
+              this.panel.webview.postMessage({
+                type: "files/result",
+                op: "search",
+                items,
+                cursor: null,
+                meta: {
+                  indexed: sum.indexed,
+                  complete: sum.complete,
+                  took_ms: Date.now() - t0,
+                  warnings: [],
+                },
+                reqId,
+              });
+            } else if (type === "files/listChildren") {
+              const items = files.listChildren(
+                path ?? "",
+                Math.max(1, Math.min(500, limit ?? 200))
+              );
               const sum = files.summary();
-              this.panel.webview.postMessage({ type: 'files/result', op: 'listChildren', items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [] }, reqId });
-            } else if (type === 'files/stat') {
-              const item = await files.stat(path ?? '');
+              this.panel.webview.postMessage({
+                type: "files/result",
+                op: "listChildren",
+                items,
+                cursor: null,
+                meta: {
+                  indexed: sum.indexed,
+                  complete: sum.complete,
+                  took_ms: Date.now() - t0,
+                  warnings: [],
+                },
+                reqId,
+              });
+            } else if (type === "files/stat") {
+              const item = await files.stat(path ?? "");
               const sum = files.summary();
               const items = item ? [item] : [];
-              this.panel.webview.postMessage({ type: 'files/result', op: 'stat', items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [] }, reqId });
-            } else if (type === 'files/resolveDrop') {
-              const res = await files.resolveDrop(Array.isArray(dropped) ? dropped : [], Math.max(1, Math.min(200, limit ?? 200)));
+              this.panel.webview.postMessage({
+                type: "files/result",
+                op: "stat",
+                items,
+                cursor: null,
+                meta: {
+                  indexed: sum.indexed,
+                  complete: sum.complete,
+                  took_ms: Date.now() - t0,
+                  warnings: [],
+                },
+                reqId,
+              });
+            } else if (type === "files/resolveDrop") {
+              const res = await files.resolveDrop(
+                Array.isArray(dropped) ? dropped : [],
+                Math.max(1, Math.min(200, limit ?? 200))
+              );
               const sum = files.summary();
               const warnings: string[] = [];
-              if (res.bad.length) warnings.push(`${res.bad.length} items rejected`);
-              if (res.truncated) warnings.push('truncated');
-              this.panel.webview.postMessage({ type: 'files/result', op: 'resolveDrop', items: res.items, cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings }, reqId });
+              if (res.bad.length)
+                warnings.push(`${res.bad.length} items rejected`);
+              if (res.truncated) warnings.push("truncated");
+              this.panel.webview.postMessage({
+                type: "files/result",
+                op: "resolveDrop",
+                items: res.items,
+                cursor: null,
+                meta: {
+                  indexed: sum.indexed,
+                  complete: sum.complete,
+                  took_ms: Date.now() - t0,
+                  warnings,
+                },
+                reqId,
+              });
             }
           } catch (e) {
             const sum = files.summary();
             const err = e instanceof Error ? e.message : String(e);
-            this.panel.webview.postMessage({ type: 'files/result', op: 'search', items: [], cursor: null, meta: { indexed: sum.indexed, complete: sum.complete, took_ms: Date.now() - t0, warnings: [err] }, reqId });
+            this.panel.webview.postMessage({
+              type: "files/result",
+              op: "search",
+              items: [],
+              cursor: null,
+              meta: {
+                indexed: sum.indexed,
+                complete: sum.complete,
+                took_ms: Date.now() - t0,
+                warnings: [err],
+              },
+              reqId,
+            });
           }
           return;
         }
@@ -145,7 +258,10 @@ export class ChatWebview implements vscode.Disposable {
     // Subscribe to transport events to forward updates to the webview
     const onToken = (payload: import("@core/events").TransportTokenPayload) => {
       try {
-        this.panel.webview.postMessage({ type: "assistant.token", token: payload.token });
+        this.panel.webview.postMessage({
+          type: "assistant.token",
+          token: payload.token,
+        });
       } catch (e) {
         const m = e instanceof Error ? e.message : String(e);
         this.logger?.warn?.("post assistant.token failed", { error: m });
@@ -158,13 +274,18 @@ export class ChatWebview implements vscode.Disposable {
         // Look up the last assistant message and post commit
         const di = this.core.diContainer;
         if (di.has("sessionStore")) {
-          const store = di.resolve<import("@/state/session-store").SessionStore>(
-            "sessionStore"
-          );
+          const store =
+            di.resolve<import("@/state/session-store").SessionStore>(
+              "sessionStore"
+            );
           const session = store.getCurrentSession();
-          const last = session?.messages.slice().reverse().find((m) => m.role === "assistant");
+          const last = session?.messages
+            .slice()
+            .reverse()
+            .find((m) => m.role === "assistant");
           const text = last?.content ?? "";
-          if (text) this.panel.webview.postMessage({ type: "assistant.commit", text });
+          if (text)
+            this.panel.webview.postMessage({ type: "assistant.commit", text });
         }
       } catch (e) {
         const m = e instanceof Error ? e.message : String(e);
@@ -199,7 +320,8 @@ export class ChatWebview implements vscode.Disposable {
       vscode.Uri.joinPath(context.extensionUri, "media", "chat", "html"),
       "**/*.html"
     );
-    const watcherAssets = vscode.workspace.createFileSystemWatcher(assetPattern);
+    const watcherAssets =
+      vscode.workspace.createFileSystemWatcher(assetPattern);
     const watcherHtml = vscode.workspace.createFileSystemWatcher(htmlPattern);
     let refreshTimer: NodeJS.Timeout | undefined;
     const refresh = () => {
@@ -212,11 +334,9 @@ export class ChatWebview implements vscode.Disposable {
     watcherHtml.onDidCreate(refresh);
     watcherHtml.onDidChange(refresh);
     watcherHtml.onDidDelete(refresh);
-    this.disposables.push(
-      watcherAssets,
-      watcherHtml,
-      { dispose: () => refreshTimer && clearTimeout(refreshTimer) }
-    );
+    this.disposables.push(watcherAssets, watcherHtml, {
+      dispose: () => refreshTimer && clearTimeout(refreshTimer),
+    });
   }
 
   private panel: vscode.WebviewPanel;
@@ -273,7 +393,9 @@ export class ChatWebview implements vscode.Disposable {
       const cssUris: vscode.Uri[] = [...rootCss];
       const jsUris: vscode.Uri[] = [...rootJs];
       try {
-        const stylesEntries = await vscode.workspace.fs.readDirectory(stylesDir);
+        const stylesEntries = await vscode.workspace.fs.readDirectory(
+          stylesDir
+        );
         for (const [n, t] of stylesEntries) {
           if (t === vscode.FileType.File && n.endsWith(".css")) {
             cssUris.push(vscode.Uri.joinPath(stylesDir, n));
@@ -306,11 +428,17 @@ export class ChatWebview implements vscode.Disposable {
       // Optionally inject compiled UI scripts first if present (classic scripts attaching globals)
       const distUiDir = vscode.Uri.joinPath(context.extensionUri, "dist", "ui");
       const distBridge = vscode.Uri.joinPath(distUiDir, "bridge.js");
-      const distRegistry = vscode.Uri.joinPath(distUiDir, "elements-registry.js");
+      const distRegistry = vscode.Uri.joinPath(
+        distUiDir,
+        "elements-registry.js"
+      );
       const distControllers = vscode.Uri.joinPath(distUiDir, "controllers.js");
       const distRenderer = vscode.Uri.joinPath(distUiDir, "renderer.js");
       const distBootstrap = vscode.Uri.joinPath(distUiDir, "bootstrap.js");
-      const distComposerBootstrap = vscode.Uri.joinPath(distUiDir, "composer-bootstrap.js");
+      const distComposerBootstrap = vscode.Uri.joinPath(
+        distUiDir,
+        "composer-bootstrap.js"
+      );
       const distScripts: vscode.Uri[] = [];
       try {
         await vscode.workspace.fs.stat(distBridge);
@@ -341,7 +469,10 @@ export class ChatWebview implements vscode.Disposable {
       // No need to inject individual module files here.
 
       const distScriptTags = (await Promise.all(distScripts.map(toUriWithV)))
-        .map((src) => `<script type="module" nonce="${nonce}" src="${src}"></script>`)
+        .map(
+          (src) =>
+            `<script type="module" nonce="${nonce}" src="${src}"></script>`
+        )
         .join("\n");
       const classicScriptTags = (await Promise.all(jsUris.map(toUriWithV)))
         .map((src) => `<script nonce="${nonce}" src="${src}"></script>`) // classic scripts
@@ -361,12 +492,14 @@ export class ChatWebview implements vscode.Disposable {
       const headerParts = await readFragments(headerDir, this.logger);
       const messageParts = await readFragments(messageDir, this.logger);
       const footerParts = await readFragments(footerDir, this.logger);
-      const messageWithBanner = (messageParts.warnings.length
-        ? '<div class="codex-fragment-warning" role="alert">Some fragments were skipped. See logs.</div>\n'
-        : "") + messageParts.html;
-      const footerWithBanner = (footerParts.warnings.length
-        ? '<div class="codex-fragment-warning" role="alert">Some fragments were skipped. See logs.</div>\n'
-        : "") + footerParts.html;
+      const messageWithBanner =
+        (messageParts.warnings.length
+          ? '<div class="codex-fragment-warning" role="alert">Some fragments were skipped. See logs.</div>\n'
+          : "") + messageParts.html;
+      const footerWithBanner =
+        (footerParts.warnings.length
+          ? '<div class="codex-fragment-warning" role="alert">Some fragments were skipped. See logs.</div>\n'
+          : "") + footerParts.html;
 
       html = html
         .replace(/{{CSP_SOURCE}}/g, webview.cspSource)
@@ -392,7 +525,8 @@ export class ChatWebview implements vscode.Disposable {
 
 function getNonce() {
   let text = "";
-  const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const possible =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   for (let i = 0; i < 32; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
@@ -424,7 +558,10 @@ async function collectHtmlFiles(root: vscode.Uri): Promise<vscode.Uri[]> {
       const entries = await vscode.workspace.fs.readDirectory(dir);
       for (const [name, type] of entries) {
         const u = vscode.Uri.joinPath(dir, name);
-        if (type === vscode.FileType.File && name.toLowerCase().endsWith(".html")) {
+        if (
+          type === vscode.FileType.File &&
+          name.toLowerCase().endsWith(".html")
+        ) {
           files.push(u);
         } else if (type === vscode.FileType.Directory) {
           stack.push(u);
@@ -440,7 +577,8 @@ async function collectHtmlFiles(root: vscode.Uri): Promise<vscode.Uri[]> {
 
 function hasForbiddenTags(html: string): string | null {
   const reScript = /<\s*script\b/i;
-  const reCspMeta = /<\s*meta[^>]*http-equiv\s*=\s*["']content-security-policy["']/i;
+  const reCspMeta =
+    /<\s*meta[^>]*http-equiv\s*=\s*["']content-security-policy["']/i;
   if (reScript.test(html)) return "Contains <script> tag";
   if (reCspMeta.test(html)) return "Contains CSP <meta http-equiv> tag";
   return null;
@@ -450,14 +588,19 @@ function htmlCommentSeparator(label: string): string {
   return `<!-- ----- fragment separator: ${label} ----- -->`;
 }
 
-async function readFragments(dir: vscode.Uri, logger?: Logger | null): Promise<FragmentResult> {
+async function readFragments(
+  dir: vscode.Uri,
+  logger?: Logger | null
+): Promise<FragmentResult> {
   const result: FragmentResult = { html: "", injected: [], warnings: [] };
   const files = await collectHtmlFiles(dir);
   if (!files.length) return result;
   const parts: string[] = [];
   for (const file of files) {
     try {
-      const text = Buffer.from(await vscode.workspace.fs.readFile(file)).toString("utf8");
+      const text = Buffer.from(
+        await vscode.workspace.fs.readFile(file)
+      ).toString("utf8");
       const forbidden = hasForbiddenTags(text);
       const label = file.path;
       if (forbidden) {
@@ -474,7 +617,10 @@ async function readFragments(dir: vscode.Uri, logger?: Logger | null): Promise<F
     }
   }
   if (result.injected.length) {
-    logger?.info?.("fragments injected", { dir: dir.path, count: result.injected.length });
+    logger?.info?.("fragments injected", {
+      dir: dir.path,
+      count: result.injected.length,
+    });
   }
   result.html = parts.join("\n");
   return result;
